@@ -1,4 +1,4 @@
-//! AIWallet: track AI subscriptions and usage limits.
+//! AI Balance: track AI subscriptions and usage limits.
 //! Copyright (c) 2026 Karim Seyam. MIT License.
 
 mod http;
@@ -370,12 +370,12 @@ fn build_tray(app: &AppHandle) -> tauri::Result<()> {
     use tauri::menu::{Menu, MenuItem};
     use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 
-    let show = MenuItem::with_id(app, "show", "Show AIWallet", true, None::<&str>)?;
+    let show = MenuItem::with_id(app, "show", "Show AI Balance", true, None::<&str>)?;
     let refresh = MenuItem::with_id(app, "refresh", "Refresh", true, None::<&str>)?;
     let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
     let menu = Menu::with_items(app, &[&show, &refresh, &quit])?;
     let mut tray = TrayIconBuilder::with_id("main")
-        .tooltip("AIWallet")
+        .tooltip("AI Balance")
         .menu(&menu)
         .show_menu_on_left_click(false)
         .on_menu_event(|app, event| match event.id.as_ref() {
@@ -405,7 +405,7 @@ fn update_tray(app: &AppHandle, state: &AppState) {
     let Some(tray) = app.tray_by_id("main") else { return };
     let limits = top_limits(state);
     let tooltip = if limits.is_empty() {
-        "AIWallet".to_string()
+        "AI Balance".to_string()
     } else {
         limits.iter().take(3).map(|(name, percent)| format!("{name}: {percent:.0}%")).collect::<Vec<_>>().join("\n")
     };
@@ -446,7 +446,7 @@ pub fn run() {
             #[cfg(desktop)]
             {
                 if let Err(error) = build_tray(app.handle()) {
-                    eprintln!("aiwallet: no tray icon: {error}");
+                    eprintln!("aibalance: no tray icon: {error}");
                 }
                 // Started at login: stay in the tray until asked for.
                 if std::env::args().any(|argument| argument == "--hidden") && app.tray_by_id("main").is_some() {
@@ -490,5 +490,5 @@ pub fn run() {
             set_settings
         ])
         .run(tauri::generate_context!())
-        .expect("error while running AIWallet");
+        .expect("error while running AI Balance");
 }

@@ -1,8 +1,9 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "AIWallet",
+  "productName": "AI Balance",
+  "mainBinaryName": "aibalance",
   "version": "0.1.0",
-  "identifier": "com.karimseyam.aiwallet",
+  "identifier": "com.karimseyam.aibalance",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -13,7 +14,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "AIWallet",
+        "title": "AI Balance",
         "width": 420,
         "height": 680,
         "minWidth": 340,
@@ -31,7 +32,7 @@
     "copyright": "Copyright © 2026 Karim Seyam",
     "category": "DeveloperTool",
     "shortDescription": "Track your AI subscriptions and usage limits",
-    "longDescription": "AIWallet shows how much of each AI plan you have used: session and weekly limits, credits and balances, all in one place.",
+    "longDescription": "AI Balance shows how much of each AI plan you have used: session and weekly limits, credits and balances, all in one place.",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

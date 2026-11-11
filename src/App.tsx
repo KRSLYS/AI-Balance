@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, inApp, type ProviderId, type ViewState } from "./api";
+import { demoState } from "./demo";
 import { I18nContext, makeI18n, resolveLang } from "./i18n";
 import Dashboard from "./Dashboard";
 import AccountsView from "./AccountsView";
@@ -18,6 +19,8 @@ export default function App() {
   const [adding, setAdding] = useState<AddTarget | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [now, setNow] = useState(Date.now());
+  // Sample data lets anyone, a store reviewer included, see the app working without an account.
+  const [sample, setSample] = useState(false);
 
   useEffect(() => {
     api.getState().then(setState);
@@ -57,6 +60,7 @@ export default function App() {
   if (!state) return <div className="app" />;
   if (!state.settings.onboarded) return <Welcome settings={state.settings} />;
   const add = (provider: ProviderId | null = null) => setAdding({ provider });
+  const shown: ViewState = sample ? { ...demoState(), settings: state.settings, mobile: state.mobile, version: state.version } : state;
   const tabs: Tab[] = ["usage", "accounts", "settings"];
 
   return (
@@ -64,7 +68,7 @@ export default function App() {
       <div className="app">
         <header className="topbar">
           <h1>{i18n.t(tab)}</h1>
-          {tab === "usage" && state.accounts.length > 0 && (
+          {tab === "usage" && shown.accounts.length > 0 && !sample && (
             <button className={`ghost refresh ${refreshing ? "spinning" : ""}`} onClick={refresh} disabled={refreshing}>
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M20 11a8 8 0 10-2.3 6.3M20 4v7h-7" />
@@ -78,9 +82,17 @@ export default function App() {
             </button>
           )}
         </header>
-        {!inApp && <div className="banner">{i18n.t("demoBanner")}</div>}
+        {!inApp && !sample && <div className="banner">{i18n.t("demoBanner")}</div>}
+        {sample && (
+          <div className="banner">
+            <span>{i18n.t("sampleBanner")}</span>
+            <button className="link" onClick={() => setSample(false)}>
+              {i18n.t("exitSample")}
+            </button>
+          </div>
+        )}
         <main className="content" key={tab}>
-          {tab === "usage" && <Dashboard state={state} now={now} onAdd={add} />}
+          {tab === "usage" && <Dashboard state={shown} now={now} onAdd={add} onSample={sample ? undefined : () => setSample(true)} />}
           {tab === "accounts" && <AccountsView state={state} onAdd={add} />}
           {tab === "settings" && <SettingsView state={state} />}
         </main>

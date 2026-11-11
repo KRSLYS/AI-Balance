@@ -20,7 +20,7 @@ pub fn auth_request(http: &Client, url: &str, device_id: &str) -> reqwest::Reque
         .header("Accept", "application/json")
         .header("X-Msh-Platform", "kimi_cli")
         .header("X-Msh-Version", env!("CARGO_PKG_VERSION"))
-        .header("X-Msh-Device-Name", "AIWallet")
+        .header("X-Msh-Device-Name", "AI Balance")
         .header("X-Msh-Device-Model", std::env::consts::OS)
         .header("X-Msh-Device-Id", device_id)
 }

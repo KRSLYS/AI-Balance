@@ -8,7 +8,7 @@ use serde_json::Value;
 
 use crate::model::{ProviderError, Result};
 
-pub const USER_AGENT: &str = concat!("AIWallet/", env!("CARGO_PKG_VERSION"));
+pub const USER_AGENT: &str = concat!("AIBalance/", env!("CARGO_PKG_VERSION"));
 
 pub fn client() -> reqwest::Client {
     reqwest::Client::builder()

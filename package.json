@@ -1,5 +1,5 @@
 {
-  "name": "aiwallet",
+  "name": "aibalance",
   "private": true,
   "version": "0.1.0",
   "description": "Track your AI subscriptions and usage limits on Windows, Linux, macOS, Android and iOS.",
@@ -18,6 +18,7 @@
     "@fontsource/ibm-plex-sans-arabic": "^5.3.0",
     "@tauri-apps/api": "^2.0.0",
     "@tauri-apps/plugin-autostart": "^2.0.0",
+    "@tauri-apps/plugin-notification": "^2.8.1",
     "@tauri-apps/plugin-opener": "^2.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

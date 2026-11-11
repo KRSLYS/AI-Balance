@@ -1,6 +1,6 @@
 name: Release
 
-# Builds AIWallet for Windows, Linux, macOS, Android and iOS.
+# Builds AI Balance for Windows, Linux, macOS, Android and iOS.
 #
 #   - Push a tag like v1.2.3      -> builds everything and publishes a GitHub Release.
 #   - Run it by hand (Actions tab) -> builds everything; publishes only when "publish" is ticked.
@@ -112,13 +112,18 @@ jobs:
         shell: bash
         run: |
           mkdir -p out
-          find "${{ matrix.bundle }}" -type f \( -name '*.deb' -o -name '*.rpm' -o -name '*.AppImage' -o -name '*.exe' -o -name '*.dmg' \) -exec cp {} out/ \;
+          find "${{ matrix.bundle }}" -type f \( -name '*.deb' -o -name '*.rpm' -o -name '*.AppImage' -o -name '*.exe' -o -name '*.dmg' \) -print0 |
+            while IFS= read -r -d '' file; do
+              # "AI Balance_1.2.3_x64.dmg" becomes "AIBalance_1.2.3_x64.dmg": no spaces in download names.
+              name="$(basename "$file")"
+              cp "$file" "out/${name// /}"
+            done
           ls -l out
           test -n "$(ls -A out)"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: aiwallet-${{ matrix.name }}
+          name: aibalance-${{ matrix.name }}
           path: out/*
           if-no-files-found: error
 
@@ -164,7 +169,7 @@ jobs:
           npx tauri icon assets/icon.png
 
       - name: Build the APK
-        run: npx tauri android build --apk --target aarch64 armv7
+        run: npx tauri android build --apk --aab --target aarch64 armv7
 
       - name: Sign the APK
         env:
@@ -176,29 +181,38 @@ jobs:
           test -n "$unsigned"
           if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
             printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.jks"
-            alias="${ANDROID_KEY_ALIAS:-aiwallet}"
+            alias="${ANDROID_KEY_ALIAS:-aibalance}"
             password="$ANDROID_KEYSTORE_PASSWORD"
           else
             echo "::warning::No ANDROID_KEYSTORE_BASE64 secret. Signing with a throwaway key: this APK installs, but it cannot update an earlier install. See the README."
-            alias=aiwallet
+            alias=aibalance
             password="$(openssl rand -hex 16)"
             keytool -genkeypair -keystore "$RUNNER_TEMP/release.jks" -storetype JKS -alias "$alias" \
               -keyalg RSA -keysize 2048 -validity 10000 -storepass "$password" -keypass "$password" \
-              -dname "CN=AIWallet test build"
+              -dname "CN=AI Balance test build"
           fi
           tools="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -n 1)"
           mkdir -p out
           "$tools/zipalign" -f 4 "$unsigned" "$RUNNER_TEMP/aligned.apk"
           "$tools/apksigner" sign --ks "$RUNNER_TEMP/release.jks" --ks-key-alias "$alias" \
             --ks-pass "pass:$password" --key-pass "pass:$password" \
-            --out "out/AIWallet_${VERSION}_android.apk" "$RUNNER_TEMP/aligned.apk"
-          "$tools/apksigner" verify "out/AIWallet_${VERSION}_android.apk"
+            --out "out/AIBalance_${VERSION}_android.apk" "$RUNNER_TEMP/aligned.apk"
+          "$tools/apksigner" verify "out/AIBalance_${VERSION}_android.apk"
+          # Google Play takes an app bundle signed with your upload key, so it is only made with a real keystore.
+          bundle="$(find src-tauri/gen/android/app/build/outputs/bundle -name '*.aab' | head -n 1)"
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ] && [ -n "$bundle" ]; then
+            cp "$bundle" "out/AIBalance_${VERSION}_android.aab"
+            jarsigner -keystore "$RUNNER_TEMP/release.jks" -storepass "$password" -keypass "$password" \
+              -sigalg SHA256withRSA -digestalg SHA-256 "out/AIBalance_${VERSION}_android.aab" "$alias"
+          fi
           rm -f "$RUNNER_TEMP/release.jks" out/*.idsig
 
       - uses: actions/upload-artifact@v4
         with:
-          name: aiwallet-Android
-          path: out/*.apk
+          name: aibalance-Android
+          path: |
+            out/*.apk
+            out/*.aab
           if-no-files-found: error
 
   ios:
@@ -250,7 +264,7 @@ jobs:
           export APPLE_API_KEY_PATH="$RUNNER_TEMP/keys/AuthKey_${APPLE_API_KEY}.p8"
           npx tauri ios build --export-method app-store-connect
           mkdir -p out
-          find src-tauri/gen/apple/build -name '*.ipa' -exec cp {} "out/AIWallet_${VERSION}_ios.ipa" \;
+          find src-tauri/gen/apple/build -name '*.ipa' -exec cp {} "out/AIBalance_${VERSION}_ios.ipa" \;
           rm -rf "$RUNNER_TEMP/keys"
 
       - name: Build an unsigned IPA (for sideloading)
@@ -276,11 +290,11 @@ jobs:
           fi
           mkdir -p out Payload
           cp -R "$app" Payload/
-          zip -qry "out/AIWallet_${VERSION}_ios_unsigned.ipa" Payload
+          zip -qry "out/AIBalance_${VERSION}_ios_unsigned.ipa" Payload
 
       - uses: actions/upload-artifact@v4
         with:
-          name: aiwallet-iOS
+          name: aibalance-iOS
           path: out/*.ipa
           if-no-files-found: error
 
@@ -295,7 +309,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: artifacts
-          pattern: aiwallet-*
+          pattern: aibalance-*
           merge-multiple: true
 
       - name: Create the GitHub Release
@@ -309,6 +323,6 @@ jobs:
           gh release create "v$VERSION" artifacts/* \
             --repo "$GITHUB_REPOSITORY" \
             --target "$GITHUB_SHA" \
-            --title "AIWallet $VERSION" \
+            --title "AI Balance $VERSION" \
             --generate-notes \
             "${flags[@]}"

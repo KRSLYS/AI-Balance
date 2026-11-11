@@ -1,5 +1,5 @@
 [package]
-name = "aiwallet"
+name = "aibalance"
 version = "0.1.0"
 description = "Track your AI subscriptions and usage limits"
 authors = ["Karim Seyam"]
@@ -8,7 +8,7 @@ edition = "2021"
 rust-version = "1.77.2"
 
 [lib]
-name = "aiwallet_lib"
+name = "aibalance_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

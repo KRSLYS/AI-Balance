@@ -58,7 +58,7 @@ impl Store {
         let mut saved = self.saved.lock().unwrap();
         let result = edit(&mut saved);
         if let Err(error) = write_json(&self.dir.join("state.json"), &*saved, false) {
-            eprintln!("aiwallet: could not save state: {error}");
+            eprintln!("aibalance: could not save state: {error}");
         }
         result
     }
@@ -173,7 +173,7 @@ impl Store {
 mod keychain {
     use crate::model::Credential;
 
-    const SERVICE: &str = "com.karimseyam.aiwallet";
+    const SERVICE: &str = "com.karimseyam.aibalance";
 
     fn entry(id: &str) -> Option<keyring::Entry> {
         keyring::Entry::new(SERVICE, id).ok()
@@ -216,7 +216,7 @@ mod tests {
     use crate::model::ProviderKind;
 
     fn temp_store(name: &str) -> Store {
-        let dir = std::env::temp_dir().join(format!("aiwallet-test-{name}-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("aibalance-test-{name}-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         Store::open(dir)
     }

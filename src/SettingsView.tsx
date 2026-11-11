@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { disable, enable, isEnabled } from "@tauri-apps/plugin-autostart";
+import { isPermissionGranted, requestPermission } from "@tauri-apps/plugin-notification";
 import { api, inApp, type Settings, type ViewState } from "./api";
 import { useI18n } from "./i18n";
 import { LANGUAGES } from "./locales";
 
 const REPOSITORY = "https://github.com/KRSLYS/AIWallet";
+const PRIVACY = `${REPOSITORY}/blob/main/PRIVACY.md`;
 
 export default function SettingsView({ state }: { state: ViewState }) {
   const i18n = useI18n();
@@ -16,6 +18,15 @@ export default function SettingsView({ state }: { state: ViewState }) {
   useEffect(() => {
     if (desktop) isEnabled().then(setAutostart).catch(() => {});
   }, [desktop]);
+
+  // Phones and macOS ask the user before an app may notify; ask when the switch goes on.
+  const setNotifications = async (on: boolean) => {
+    if (on && inApp) {
+      const allowed = (await isPermissionGranted().catch(() => true)) || (await requestPermission().catch(() => "denied")) === "granted";
+      if (!allowed) return void update({ notifications: false });
+    }
+    update({ notifications: on });
+  };
 
   const toggleAutostart = async (on: boolean) => {
     try {
@@ -41,7 +52,7 @@ export default function SettingsView({ state }: { state: ViewState }) {
         </label>
         <label>
           {i18n.t("notifications")}
-          <input type="checkbox" checked={settings.notifications} onChange={(event) => update({ notifications: event.target.checked })} />
+          <input type="checkbox" checked={settings.notifications} onChange={(event) => setNotifications(event.target.checked)} />
         </label>
         <label>
           {i18n.t("notifyAt")}
@@ -82,13 +93,16 @@ export default function SettingsView({ state }: { state: ViewState }) {
         </label>
       </section>
       <section className="card about">
-        <strong>AIWallet</strong>
+        <strong>AI Balance</strong>
         <span className="muted">
           {i18n.t("version")} {state.version}
         </span>
         <span className="muted">{i18n.t("madeBy")} · MIT</span>
         <button className="link" onClick={() => api.open(REPOSITORY)}>
           {i18n.t("sourceCode")} ↗
+        </button>
+        <button className="link" onClick={() => api.open(PRIVACY)}>
+          {i18n.t("privacyPolicy")} ↗
         </button>
       </section>
     </div>

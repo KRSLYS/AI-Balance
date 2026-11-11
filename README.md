@@ -1,11 +1,11 @@
-# AIWallet
+# AI Balance
 
 Track your AI subscriptions in one place, on **Windows, Linux, macOS, Android and iOS**.
 
-AIWallet shows how much of each AI plan you have used: session and weekly limits, credits and
+AI Balance shows how much of each AI plan you have used: session and weekly limits, credits and
 balances. On desktop it lives in the system tray and warns you before a limit runs out.
 
-<p align="center"><img src="assets/icon.png" alt="AIWallet icon" width="128"></p>
+<p align="center"><img src="assets/icon.png" alt="AI Balance icon" width="128"></p>
 
 ## Supported providers
 
@@ -20,12 +20,12 @@ balances. On desktop it lives in the system tray and warns you before a limit ru
 | Z.ai | API key | Session, Weekly, Web Searches |
 | Ollama | API key | Session, Weekly, Monthly, Purchased Credits |
 
-Every number comes from the provider's own API. AIWallet estimates nothing.
+Every number comes from the provider's own API. AI Balance estimates nothing.
 
 ## Features
 
 - One card per account, with a bar per limit and the time until it resets.
-- Sign in with a link: AIWallet opens it for you, or copy it to any device or browser where you are
+- Sign in with a link: AI Balance opens it for you, or copy it to any device or browser where you are
   already signed in. Nothing to type for most providers.
 - Several accounts per provider, grouped together. Rename and reorder them.
 - Automatic refresh (every 5 minutes by default) and a Refresh button.
@@ -39,8 +39,10 @@ Every number comes from the provider's own API. AIWallet estimates nothing.
 - Credentials stay on your device. On desktop they are stored in the operating system's keychain
   (Keychain, Windows Credential Manager, Secret Service); on phones, and on a desktop without a
   keychain, in the app's private data folder.
-- A credential is sent only to its own provider. There is no AIWallet server, no analytics and no
+- A credential is sent only to its own provider. There is no AI Balance server, no analytics and no
   telemetry.
+- The full policy is in [PRIVACY.md](PRIVACY.md). Publishing to the app stores is covered in
+  [docs/STORES.md](docs/STORES.md).
 
 ## Install
 
@@ -48,17 +50,17 @@ Download the file for your system from the [latest release](https://github.com/K
 
 | System | File |
 |---|---|
-| Windows | `AIWallet_x.y.z_x64-setup.exe` |
-| macOS (Apple Silicon and Intel) | `AIWallet_x.y.z_universal.dmg` |
+| Windows | `AIBalance_x.y.z_x64-setup.exe` |
+| macOS (Apple Silicon and Intel) | `AIBalance_x.y.z_universal.dmg` |
 | Linux | `.deb`, `.rpm` or `.AppImage` |
-| Android | `AIWallet_x.y.z_android.apk` |
+| Android | `AIBalance_x.y.z_android.apk` |
 | iOS | `.ipa` (see [iOS](#ios)) |
 
 The builds are not yet signed with paid certificates, so:
 
 - **Windows** shows a SmartScreen notice: choose **More info**, then **Run anyway**.
 - **macOS** blocks the first launch: right-click the app and choose **Open**, or run
-  `xattr -dr com.apple.quarantine /Applications/AIWallet.app`.
+  `xattr -dr com.apple.quarantine "/Applications/AI Balance.app"`.
 - **Android** asks you to allow installing from your browser or file manager.
 
 ## Releasing
@@ -90,9 +92,9 @@ Without any secrets the workflow still produces installers for every platform. A
 
 | Secret | What it is |
 |---|---|
-| `ANDROID_KEYSTORE_BASE64` | base64 of your Android signing keystore |
+| `ANDROID_KEYSTORE_BASE64` | base64 of your Android signing keystore (also produces a signed `.aab` for Google Play) |
 | `ANDROID_KEYSTORE_PASSWORD` | the keystore's password (also used as the key's password) |
-| `ANDROID_KEY_ALIAS` | the key's alias (`aiwallet` when not set) |
+| `ANDROID_KEY_ALIAS` | the key's alias (`aibalance` when not set) |
 | `APPLE_API_ISSUER` | App Store Connect API issuer ID |
 | `APPLE_API_KEY` | App Store Connect API key ID |
 | `APPLE_API_KEY_BASE64` | base64 of the API key's `.p8` file |
@@ -105,11 +107,11 @@ installs, but it cannot update an earlier install: you have to uninstall first. 
 once and keep it safe, because every later update must be signed with the same one:
 
 ```bash
-keytool -genkeypair -keystore aiwallet.jks -storetype JKS -alias aiwallet -keyalg RSA -keysize 2048 -validity 10000
+keytool -genkeypair -keystore aibalance.jks -storetype JKS -alias aibalance -keyalg RSA -keysize 2048 -validity 10000
 ```
 
 ```bash
-base64 -w0 aiwallet.jks
+base64 -w0 aibalance.jks
 ```
 
 #### iOS
@@ -167,7 +169,7 @@ line in `providers/mod.rs`, and an entry in `src/providers.ts`.
 
 ## بالعربية
 
-**AIWallet** تطبيق يعرض استهلاكك من اشتراكات الذكاء الاصطناعي (Claude و ChatGPT و Cursor و Copilot و Kimi
+**AI Balance** تطبيق يعرض استهلاكك من اشتراكات الذكاء الاصطناعي (Claude و ChatGPT و Cursor و Copilot و Kimi
 و OpenRouter و Z.ai و Ollama) في مكان واحد، ويعمل على Windows و Linux و macOS و Android و iOS.
 
 - بيانات الدخول تبقى على جهازك ولا تُرسل إلا إلى المزوّد نفسه.
@@ -177,7 +179,7 @@ line in `providers/mod.rs`, and an entry in `src/providers.ts`.
 ## Acknowledgements
 
 The idea comes from [OpenUsage](https://github.com/robinebers/openusage) by Robin Ebers, a macOS
-menu bar app. AIWallet is an independent project with its own code and is not affiliated with it.
+menu bar app. AI Balance is an independent project with its own code and is not affiliated with it.
 
 ## License
 

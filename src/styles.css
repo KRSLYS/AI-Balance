@@ -205,6 +205,10 @@ code {
 }
 
 .banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   margin: 0 18px 8px;
   padding: 8px 12px;
   border-radius: 10px;
@@ -895,4 +899,9 @@ input[type="checkbox"] {
     animation: none !important;
     transition: none !important;
   }
+}
+
+.link.block {
+  display: block;
+  margin: 12px auto 0;
 }

@@ -7,6 +7,8 @@ interface Props {
   state: ViewState;
   now: number;
   onAdd: (provider?: ProviderId | null) => void;
+  /** Shows sample data; absent while it is already showing. */
+  onSample?: () => void;
 }
 
 /** Accounts of one provider, kept together in the order the first of them appears. */
@@ -16,7 +18,7 @@ function groupByProvider(accounts: Account[]): Account[][] {
   return [...groups.values()];
 }
 
-export default function Dashboard({ state, now, onAdd }: Props) {
+export default function Dashboard({ state, now, onAdd, onSample }: Props) {
   const i18n = useI18n();
   if (state.accounts.length === 0) {
     return (
@@ -26,6 +28,11 @@ export default function Dashboard({ state, now, onAdd }: Props) {
         <button className="primary" onClick={() => onAdd()}>
           {i18n.t("addAccount")}
         </button>
+        {onSample && (
+          <button className="link block" onClick={onSample}>
+            {i18n.t("trySample")}
+          </button>
+        )}
       </div>
     );
   }

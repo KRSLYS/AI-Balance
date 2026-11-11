@@ -191,7 +191,8 @@ impl Default for Settings {
     fn default() -> Self {
         Self {
             refresh_minutes: 5,
-            notifications: true,
+            // Off until the user turns it on, which is when the system is asked for permission.
+            notifications: false,
             notify_threshold: 90,
             language: "system".into(),
             theme: "system".into(),

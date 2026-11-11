@@ -391,11 +391,11 @@ async fn wait_for_callback(listener: Option<TcpListener>, path: &str, state: &st
         let request = String::from_utf8_lossy(&buffer[..read]);
         let result = callback_code(&request, path, state);
         let (status, message) = match &result {
-            Some(Ok(_)) => ("200 OK", "Signed in. You can close this tab and return to AIWallet."),
-            Some(Err(_)) => ("400 Bad Request", "Sign-in failed. Return to AIWallet and try again."),
+            Some(Ok(_)) => ("200 OK", "Signed in. You can close this tab and return to AI Balance."),
+            Some(Err(_)) => ("400 Bad Request", "Sign-in failed. Return to AI Balance and try again."),
             None => ("404 Not Found", "Not found."),
         };
-        let page = format!("<!doctype html><meta charset=utf-8><title>AIWallet</title><body style=\"font-family:system-ui;padding:3rem;text-align:center\"><h2>{message}</h2>");
+        let page = format!("<!doctype html><meta charset=utf-8><title>AI Balance</title><body style=\"font-family:system-ui;padding:3rem;text-align:center\"><h2>{message}</h2>");
         let response = format!(
             "HTTP/1.1 {status}\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{page}",
             page.len()
