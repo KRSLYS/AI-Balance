@@ -93,15 +93,23 @@ jobs:
 
       - name: Install Linux dependencies
         if: runner.os == 'Linux'
-        timeout-minutes: 10
+        timeout-minutes: 15
         run: |
           # The runner's default Azure mirror can be unreachable, and apt then waits on every package.
           # Use Ubuntu's own archive instead.
           sudo sed -i '/azure\.archive\.ubuntu\.com/d' /etc/apt/apt-mirrors.txt 2>/dev/null || true
           sudo sed -i 's|http://azure\.archive\.ubuntu\.com|http://archive.ubuntu.com|g' /etc/apt/sources.list /etc/apt/sources.list.d/* 2>/dev/null || true
           sudo rm -f /var/lib/man-db/auto-update
-          sudo apt-get -o Acquire::http::Timeout=20 -o Acquire::Retries=3 update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::http::Timeout=20 -o Acquire::Retries=3 install -y --no-install-recommends libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libxdo-dev libssl-dev patchelf rpm
+          # The archive is sometimes mid-update and misses a package for a minute; refresh and try again.
+          for attempt in 1 2 3 4; do
+            if sudo apt-get -o Acquire::http::Timeout=20 -o Acquire::Retries=3 update &&
+              sudo DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::http::Timeout=20 -o Acquire::Retries=3 install -y --no-install-recommends libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libxdo-dev libssl-dev patchelf rpm; then
+              exit 0
+            fi
+            echo "Attempt $attempt failed; waiting before the next one."
+            sleep 45
+          done
+          exit 1
 
       - uses: actions/setup-node@v4
         with:
@@ -241,8 +249,8 @@ jobs:
     name: iOS
     needs: prepare
     runs-on: macos-latest
-    # An iPhone build needs an Apple Developer account. Without its secrets this job reports that and
-    # tries an unsigned build for sideloading; it never blocks the release of the other platforms.
+    # An iPhone build needs an Apple Developer account. Without its secrets this job checks that the
+    # Xcode project generates and says why there is no app; it never blocks the other platforms.
     continue-on-error: true
     env:
       VERSION: ${{ needs.prepare.outputs.version }}
@@ -291,33 +299,12 @@ jobs:
           find src-tauri/gen/apple/build -name '*.ipa' -exec cp {} "out/AIBalance_${VERSION}_ios.ipa" \;
           rm -rf "$RUNNER_TEMP/keys"
 
-      - name: Build an unsigned IPA (for sideloading)
+      - name: Explain the missing iOS build
         if: env.APPLE_API_KEY_BASE64 == '' || env.APPLE_DEVELOPMENT_TEAM == ''
-        run: |
-          echo "::warning::No Apple signing secrets. Building an unsigned IPA, which installs only through a sideloading tool that signs it with your Apple ID. See the README."
-          cd src-tauri/gen/apple
-          # Turn code signing off for every target, then let Xcode archive the app.
-          ruby -ryaml -e '
-            project = YAML.load_file("project.yml")
-            base = ((project["settings"] ||= {})["base"] ||= {})
-            base.merge!("CODE_SIGNING_ALLOWED" => "NO", "CODE_SIGNING_REQUIRED" => "NO", "CODE_SIGN_IDENTITY" => "")
-            File.write("project.yml", project.to_yaml)
-          '
-          xcodegen generate
-          cd "$GITHUB_WORKSPACE"
-          # The archive step produces the app; the export step needs a signature and is expected to fail.
-          # Outside CI the build does not ask for App Store Connect keys.
-          env -u CI -u GITHUB_ACTIONS APPLE_DEVELOPMENT_TEAM=UNSIGNED000 npx tauri ios build || true
-          app="$(find src-tauri/gen/apple -path '*.xcarchive/Products/Applications/*.app' -maxdepth 6 -type d | head -n 1)"
-          if [ -z "$app" ]; then
-            echo "::error::Xcode produced no app to package."
-            exit 1
-          fi
-          mkdir -p out Payload
-          cp -R "$app" Payload/
-          zip -qry "out/AIBalance_${VERSION}_ios_unsigned.ipa" Payload
+        run: echo "::notice::No iOS app was built. Apple only allows signed iOS builds here, so add the APPLE_* secrets described in the README."
 
       - uses: actions/upload-artifact@v4
+        if: env.APPLE_API_KEY_BASE64 != '' && env.APPLE_DEVELOPMENT_TEAM != ''
         with:
           name: aibalance-iOS
           path: out/*.ipa

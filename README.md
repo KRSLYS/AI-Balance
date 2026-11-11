@@ -125,9 +125,8 @@ Apple only lets a signed app run on an iPhone.
 
 - **With an Apple Developer account** ($99 a year): add the four `APPLE_*` secrets and the workflow
   builds a signed `.ipa` you can upload to TestFlight or the App Store.
-- **Without one:** the workflow tries to build an unsigned `.ipa`. Install it with a sideloading
-  tool such as AltStore or Sideloadly, which signs it with your own Apple ID for seven days at a
-  time. This path is experimental, and it never blocks the release of the other platforms.
+- **Without one:** no iOS app is built. The build tools refuse to make an unsigned iOS app in CI,
+  and an iPhone would not run it anyway. The other platforms are released as usual.
 
 ## Development
 
