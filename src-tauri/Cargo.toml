@@ -4,6 +4,8 @@ version = "0.1.0"
 description = "Track your AI subscriptions and usage limits"
 authors = ["KRSLYS BV"]
 license = "MIT"
+homepage = "https://aibalance.krslys.be/"
+repository = "https://github.com/KRSLYS/AIWallet"
 edition = "2021"
 rust-version = "1.77.2"
 

@@ -1,5 +1,7 @@
 # AI Balance
 
+**Website:** <https://aibalance.krslys.be/>
+
 Track your AI subscriptions in one place, on **Windows, Linux, macOS, Android and iOS**.
 
 AI Balance shows how much of each AI plan you have used: session and weekly limits, credits and

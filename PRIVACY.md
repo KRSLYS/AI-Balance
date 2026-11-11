@@ -83,4 +83,4 @@ Changes to this policy are published in this file. Its history is public in the 
 
 KRSLYS BV, [registered address], Belgium. Company number (KBO/BCE): 1026.902.574. VAT: BE 1026.902.574.
 
-Email <info@krslys.be>, or open an issue at <https://github.com/KRSLYS/AIWallet/issues>.
+Website: <https://aibalance.krslys.be/>. Email <info@krslys.be>, or open an issue at <https://github.com/KRSLYS/AIWallet/issues>.

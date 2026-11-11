@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "description": "Track your AI subscriptions and usage limits on Windows, Linux, macOS, Android and iOS.",
   "author": "KRSLYS BV",
+  "homepage": "https://aibalance.krslys.be/",
   "license": "MIT",
   "type": "module",
   "scripts": {

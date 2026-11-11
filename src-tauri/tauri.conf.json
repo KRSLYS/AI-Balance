@@ -29,6 +29,7 @@
     "active": true,
     "targets": "all",
     "publisher": "KRSLYS BV",
+    "homepage": "https://aibalance.krslys.be/",
     "copyright": "Copyright © 2026 KRSLYS BV",
     "category": "DeveloperTool",
     "shortDescription": "Track your AI subscriptions and usage limits",
