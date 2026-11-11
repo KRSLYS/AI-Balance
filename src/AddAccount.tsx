@@ -32,7 +32,9 @@ export default function AddAccount({ initial, onClose }: Props) {
           <div className="grid">
             {PROVIDERS.map((item) => (
               <button key={item.id} className="tile" onClick={() => setProvider(item.id)}>
-                <span className="dot" style={{ background: item.color }} />
+                <span className="avatar small" style={{ background: item.color }} aria-hidden>
+                  {item.name[0]}
+                </span>
                 {item.name}
               </button>
             ))}

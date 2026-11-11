@@ -36,6 +36,7 @@ export interface Settings {
   notifyThreshold: number;
   language: string;
   theme: string;
+  onboarded: boolean;
 }
 
 export interface ViewState {

@@ -5,6 +5,7 @@ import Dashboard from "./Dashboard";
 import AccountsView from "./AccountsView";
 import SettingsView from "./SettingsView";
 import AddAccount from "./AddAccount";
+import Welcome from "./Welcome";
 
 type Tab = "usage" | "accounts" | "settings";
 
@@ -34,7 +35,7 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.lang = i18n.lang;
-    document.documentElement.dir = i18n.lang === "ar" ? "rtl" : "ltr";
+    document.documentElement.dir = i18n.rtl ? "rtl" : "ltr";
   }, [i18n]);
 
   useEffect(() => {
@@ -54,6 +55,7 @@ export default function App() {
   };
 
   if (!state) return <div className="app" />;
+  if (!state.settings.onboarded) return <Welcome settings={state.settings} />;
   const add = (provider: ProviderId | null = null) => setAdding({ provider });
   const tabs: Tab[] = ["usage", "accounts", "settings"];
 
@@ -63,7 +65,10 @@ export default function App() {
         <header className="topbar">
           <h1>{i18n.t(tab)}</h1>
           {tab === "usage" && state.accounts.length > 0 && (
-            <button className="ghost" onClick={refresh} disabled={refreshing}>
+            <button className={`ghost refresh ${refreshing ? "spinning" : ""}`} onClick={refresh} disabled={refreshing}>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M20 11a8 8 0 10-2.3 6.3M20 4v7h-7" />
+              </svg>
               {refreshing ? i18n.t("refreshing") : i18n.t("refresh")}
             </button>
           )}
@@ -74,7 +79,7 @@ export default function App() {
           )}
         </header>
         {!inApp && <div className="banner">{i18n.t("demoBanner")}</div>}
-        <main className="content">
+        <main className="content" key={tab}>
           {tab === "usage" && <Dashboard state={state} now={now} onAdd={add} />}
           {tab === "accounts" && <AccountsView state={state} onAdd={add} />}
           {tab === "settings" && <SettingsView state={state} />}

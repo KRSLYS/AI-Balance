@@ -1,7 +1,7 @@
 import type { Format, MetricLine } from "./api";
 import type { I18n } from "./i18n";
 
-const locale = (i18n: I18n) => (i18n.lang === "ar" ? "ar" : "en");
+const locale = (i18n: I18n) => i18n.lang;
 
 export function formatNumber(value: number, format: Format, i18n: I18n): string {
   switch (format.type) {

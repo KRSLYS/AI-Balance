@@ -183,11 +183,13 @@ pub struct Settings {
     pub notify_threshold: u32,
     pub language: String,
     pub theme: String,
+    /// The first-run welcome screen has been completed.
+    pub onboarded: bool,
 }
 
 impl Default for Settings {
     fn default() -> Self {
-        Self { refresh_minutes: 5, notifications: true, notify_threshold: 90, language: "system".into(), theme: "system".into() }
+        Self { refresh_minutes: 5, notifications: true, notify_threshold: 90, language: "system".into(), theme: "system".into(), onboarded: false }
     }
 }
 

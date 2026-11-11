@@ -52,7 +52,9 @@ function AccountRow({ account, first, last, needsLogin, onAdd }: { account: Acco
   return (
     <section className="card">
       <header className="card-head">
-        <span className="dot" style={{ background: provider.color }} />
+        <span className="avatar" style={{ background: provider.color }} aria-hidden>
+          {provider.name[0]}
+        </span>
         <div className="card-title">
           <strong>{provider.name}</strong>
           {name === null ? (

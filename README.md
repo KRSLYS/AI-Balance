@@ -27,11 +27,12 @@ Every number comes from the provider's own API. AIWallet estimates nothing.
 - One card per account, with a bar per limit and the time until it resets.
 - Sign in with a link: AIWallet opens it for you, or copy it to any device or browser where you are
   already signed in. Nothing to type for most providers.
-- Several accounts per provider. Rename and reorder them.
+- Several accounts per provider, grouped together. Rename and reorder them.
 - Automatic refresh (every 5 minutes by default) and a Refresh button.
 - A notification when a limit reaches the threshold you choose.
 - Desktop: system tray icon whose tooltip shows your fullest limits, close-to-tray, launch at login.
-- English and Arabic (right-to-left), light and dark themes.
+- 12 languages, chosen on first launch: English, العربية, 简体中文, Français, Deutsch, Español,
+  Italiano, Português, Nederlands, Polski, Русский, Türkçe. Light and dark themes.
 
 ## Privacy
 
@@ -153,7 +154,8 @@ For the phone apps, run `npm run tauri android init` or `npm run tauri ios init`
 
 ### How the code is laid out
 
-- `src/` is the interface: React and TypeScript.
+- `src/` is the interface: React and TypeScript. `src/locales/` has one file per language; to add a
+  language, copy `en.ts`, translate it, and add a line to `locales/index.ts`.
 - `src-tauri/src/providers/` has one file per provider: the HTTP reads and the mapping from the
   provider's answer to metric lines, each with tests.
 - `src-tauri/src/login.rs` holds the sign-in flows (browser with PKCE, device code).
@@ -169,7 +171,7 @@ line in `providers/mod.rs`, and an entry in `src/providers.ts`.
 و OpenRouter و Z.ai و Ollama) في مكان واحد، ويعمل على Windows و Linux و macOS و Android و iOS.
 
 - بيانات الدخول تبقى على جهازك ولا تُرسل إلا إلى المزوّد نفسه.
-- الواجهة تدعم العربية والإنجليزية والوضعين الفاتح والداكن.
+- الواجهة تدعم 12 لغة (منها العربية والإنجليزية والصينية ولغات أوروبية) والوضعين الفاتح والداكن.
 - لإصدار نسخة جديدة يكفي رفع وسم (tag) مثل `v0.1.0`، وسيبني GitHub Actions كل المنصات وينشر الإصدار.
 
 ## Acknowledgements

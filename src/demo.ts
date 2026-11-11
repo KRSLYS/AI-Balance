@@ -8,9 +8,10 @@ export function demoState(): ViewState {
   return {
     mobile: false,
     version: "demo",
-    settings: { refreshMinutes: 5, notifications: true, notifyThreshold: 90, language: "system", theme: "system" },
+    settings: { refreshMinutes: 5, notifications: true, notifyThreshold: 90, language: "system", theme: "system", onboarded: !new URLSearchParams(location.search).has("welcome") },
     accounts: [
       { id: "a", provider: "claude", label: "you@example.com", createdAt: now },
+      { id: "a2", provider: "claude", label: "team@example.com", createdAt: now },
       { id: "b", provider: "codex", label: "you@example.com", createdAt: now },
       { id: "c", provider: "cursor", label: "you@example.com", createdAt: now },
       { id: "d", provider: "openrouter", label: "OpenRouter", createdAt: now },
@@ -24,6 +25,13 @@ export function demoState(): ViewState {
           { kind: "progress", label: "Weekly", used: 46, limit: 100, format: { type: "percent" }, resetsAt: now + 80 * HOUR, periodMs: 168 * HOUR },
           { kind: "progress", label: "Sonnet", used: 12, limit: 100, format: { type: "percent" }, resetsAt: now + 80 * HOUR, periodMs: 168 * HOUR },
           { kind: "progress", label: "Extra Usage", used: 12.4, limit: 50, format: { type: "currency", code: "USD" }, resetsAt: null, periodMs: null },
+        ],
+      },
+      a2: {
+        accountId: "a2", plan: "Team", fetchedAt: now - 60_000, error: null, needsLogin: false,
+        lines: [
+          { kind: "progress", label: "Session", used: 18, limit: 100, format: { type: "percent" }, resetsAt: now + 4.1 * HOUR, periodMs: 5 * HOUR },
+          { kind: "progress", label: "Weekly", used: 71, limit: 100, format: { type: "percent" }, resetsAt: now + 52 * HOUR, periodMs: 168 * HOUR },
         ],
       },
       b: {

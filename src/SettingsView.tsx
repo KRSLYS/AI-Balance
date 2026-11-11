@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { disable, enable, isEnabled } from "@tauri-apps/plugin-autostart";
 import { api, inApp, type Settings, type ViewState } from "./api";
 import { useI18n } from "./i18n";
+import { LANGUAGES } from "./locales";
 
 const REPOSITORY = "https://github.com/KRSLYS/AIWallet";
 
@@ -64,8 +65,11 @@ export default function SettingsView({ state }: { state: ViewState }) {
           {i18n.t("language")}
           <select value={settings.language} onChange={(event) => update({ language: event.target.value })}>
             <option value="system">{i18n.t("system")}</option>
-            <option value="en">English</option>
-            <option value="ar">العربية</option>
+            {LANGUAGES.map((language) => (
+              <option key={language.code} value={language.code}>
+                {language.name}
+              </option>
+            ))}
           </select>
         </label>
         <label>
