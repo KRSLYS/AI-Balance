@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f46e5"/>
+      <stop offset="1" stop-color="#0ea5a4"/>
+    </linearGradient>
+  </defs>
+  <rect x="64" y="64" width="896" height="896" rx="208" fill="url(#bg)"/>
+  <!-- wallet body -->
+  <rect x="212" y="330" width="600" height="420" rx="72" fill="none" stroke="#fff" stroke-width="56"/>
+  <!-- flap -->
+  <path d="M282 330 L640 236 a40 40 0 0 1 50 38 V330" fill="none" stroke="#fff" stroke-width="56" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- usage bars -->
+  <rect x="300" y="470" width="300" height="48" rx="24" fill="#fff"/>
+  <rect x="300" y="562" width="190" height="48" rx="24" fill="#fff" opacity=".7"/>
+  <!-- clasp -->
+  <circle cx="716" cy="540" r="44" fill="#fff"/>
+</svg>

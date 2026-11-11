@@ -1,0 +1,176 @@
+import { createContext, useContext } from "react";
+
+const en = {
+  usage: "Usage",
+  accounts: "Accounts",
+  settings: "Settings",
+  refresh: "Refresh",
+  refreshing: "Refreshing…",
+  emptyTitle: "No accounts yet",
+  emptyBody: "Add an account to see how much of each AI plan you have used.",
+  addAccount: "Add Account",
+  chooseProvider: "Choose a provider",
+  updated: "Updated",
+  justNow: "just now",
+  minutesAgo: "{n} min ago",
+  hoursAgo: "{n} h ago",
+  resetsIn: "Resets in {t}",
+  resetsSoon: "Resets soon",
+  left: "left",
+  used: "used",
+  signInAgain: "Sign In Again",
+  replaceKey: "Replace API Key",
+  noUsage: "No usage to show yet.",
+  rename: "Rename",
+  remove: "Remove",
+  removeConfirm: "Remove this account?",
+  moveUp: "Move up",
+  moveDown: "Move down",
+  save: "Save",
+  cancel: "Cancel",
+  back: "Back",
+  close: "Close",
+  apiKey: "API key",
+  pasteKey: "Paste your API key",
+  getKey: "Get a key",
+  nameOptional: "Name (optional)",
+  add: "Add",
+  checking: "Checking…",
+  signInBrowser: "Finish signing in in your browser, then come back here.",
+  deviceCode: "Enter this code on the page that opened:",
+  copy: "Copy",
+  copied: "Copied",
+  openPage: "Open Page Again",
+  pasteCode: "If the page shows a code, paste it here",
+  submit: "Submit",
+  waiting: "Waiting for sign-in…",
+  refreshEvery: "Refresh every",
+  minutes: "{n} minutes",
+  notifications: "Notifications",
+  notifyAt: "Notify when a limit reaches",
+  language: "Language",
+  theme: "Theme",
+  system: "System",
+  light: "Light",
+  dark: "Dark",
+  launchAtLogin: "Launch at login",
+  about: "About",
+  version: "Version",
+  madeBy: "Made by Karim Seyam",
+  sourceCode: "Source code",
+  demoBanner: "Demo data. Run the app to see your own accounts.",
+  privacy: "Credentials stay on this device and are sent only to their own provider.",
+} as const;
+
+export type Key = keyof typeof en;
+
+const ar: Record<Key, string> = {
+  usage: "الاستخدام",
+  accounts: "الحسابات",
+  settings: "الإعدادات",
+  refresh: "تحديث",
+  refreshing: "جارٍ التحديث…",
+  emptyTitle: "لا توجد حسابات بعد",
+  emptyBody: "أضف حسابًا لترى كم استهلكت من كل اشتراك ذكاء اصطناعي.",
+  addAccount: "إضافة حساب",
+  chooseProvider: "اختر المزوّد",
+  updated: "آخر تحديث",
+  justNow: "الآن",
+  minutesAgo: "قبل {n} د",
+  hoursAgo: "قبل {n} س",
+  resetsIn: "يتجدد خلال {t}",
+  resetsSoon: "يتجدد قريبًا",
+  left: "متبقٍ",
+  used: "مستخدم",
+  signInAgain: "تسجيل الدخول مجددًا",
+  replaceKey: "استبدال مفتاح API",
+  noUsage: "لا يوجد استخدام لعرضه بعد.",
+  rename: "إعادة تسمية",
+  remove: "حذف",
+  removeConfirm: "هل تريد حذف هذا الحساب؟",
+  moveUp: "تحريك للأعلى",
+  moveDown: "تحريك للأسفل",
+  save: "حفظ",
+  cancel: "إلغاء",
+  back: "رجوع",
+  close: "إغلاق",
+  apiKey: "مفتاح API",
+  pasteKey: "الصق مفتاح API هنا",
+  getKey: "احصل على مفتاح",
+  nameOptional: "الاسم (اختياري)",
+  add: "إضافة",
+  checking: "جارٍ التحقق…",
+  signInBrowser: "أكمل تسجيل الدخول في المتصفح ثم عُد إلى هنا.",
+  deviceCode: "أدخل هذا الرمز في الصفحة التي فُتحت:",
+  copy: "نسخ",
+  copied: "تم النسخ",
+  openPage: "فتح الصفحة مجددًا",
+  pasteCode: "إذا عرضت الصفحة رمزًا فالصقه هنا",
+  submit: "إرسال",
+  waiting: "بانتظار تسجيل الدخول…",
+  refreshEvery: "التحديث كل",
+  minutes: "{n} دقائق",
+  notifications: "الإشعارات",
+  notifyAt: "نبّهني عندما يصل الحد إلى",
+  language: "اللغة",
+  theme: "المظهر",
+  system: "النظام",
+  light: "فاتح",
+  dark: "داكن",
+  launchAtLogin: "التشغيل عند بدء النظام",
+  about: "حول",
+  version: "الإصدار",
+  madeBy: "من تطوير Karim Seyam",
+  sourceCode: "الكود المصدري",
+  demoBanner: "بيانات تجريبية. شغّل التطبيق لترى حساباتك.",
+  privacy: "بيانات الدخول تبقى على هذا الجهاز ولا تُرسل إلا إلى مزوّدها.",
+};
+
+/** Arabic names for the metric labels the providers report. */
+const arLabels: Record<string, string> = {
+  Session: "الجلسة",
+  Weekly: "الأسبوعي",
+  Monthly: "الشهري",
+  "Extra Usage": "الاستخدام الإضافي",
+  Credits: "الرصيد",
+  "Credit Limit": "حد الرصيد",
+  "Total Usage": "إجمالي الاستخدام",
+  "Cursor Models": "نماذج Cursor",
+  "Other Models": "نماذج أخرى",
+  "On-Demand": "عند الطلب",
+  Premium: "الطلبات المميزة",
+  Chat: "المحادثة",
+  Completions: "الإكمال",
+  Balance: "الرصيد",
+  Today: "اليوم",
+  "This Week": "هذا الأسبوع",
+  "This Month": "هذا الشهر",
+  "Key Limit": "حد المفتاح",
+  "Web Searches": "بحث الويب",
+  "Purchased Credits": "الرصيد المشترى",
+};
+
+export type Lang = "en" | "ar";
+
+export function resolveLang(setting: string): Lang {
+  const wanted = setting === "system" ? navigator.language : setting;
+  return wanted.toLowerCase().startsWith("ar") ? "ar" : "en";
+}
+
+export interface I18n {
+  lang: Lang;
+  t: (key: Key, vars?: Record<string, string | number>) => string;
+  label: (label: string) => string;
+}
+
+export function makeI18n(lang: Lang): I18n {
+  const table = lang === "ar" ? ar : en;
+  return {
+    lang,
+    t: (key, vars = {}) => Object.entries(vars).reduce((text, [name, value]) => text.replace(`{${name}}`, String(value)), table[key] as string),
+    label: (label) => (lang === "ar" ? arLabels[label] ?? label : label),
+  };
+}
+
+export const I18nContext = createContext<I18n>(makeI18n("en"));
+export const useI18n = () => useContext(I18nContext);
