@@ -303,7 +303,8 @@ jobs:
           xcodegen generate
           cd "$GITHUB_WORKSPACE"
           # The archive step produces the app; the export step needs a signature and is expected to fail.
-          APPLE_DEVELOPMENT_TEAM=UNSIGNED000 npx tauri ios build || true
+          # Outside CI the build does not ask for App Store Connect keys.
+          env -u CI -u GITHUB_ACTIONS APPLE_DEVELOPMENT_TEAM=UNSIGNED000 npx tauri ios build || true
           app="$(find src-tauri/gen/apple -path '*.xcarchive/Products/Applications/*.app' -maxdepth 6 -type d | head -n 1)"
           if [ -z "$app" ]; then
             echo "::error::Xcode produced no app to package."
