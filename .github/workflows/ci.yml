@@ -15,11 +15,12 @@ permissions:
 jobs:
   check:
     name: Lint, test and build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Linux dependencies
+        timeout-minutes: 10
         run: |
           # Skip the manual-page index rebuild, which can stall the install for many minutes.
           sudo rm -f /var/lib/man-db/auto-update

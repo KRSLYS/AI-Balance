@@ -26,7 +26,7 @@ on:
         default: false
 
 concurrency:
-  group: release-${{ github.ref }}-${{ inputs.version }}
+  group: release-${{ github.sha }}-${{ inputs.version }}
   cancel-in-progress: false
 
 permissions:
@@ -76,7 +76,7 @@ jobs:
       matrix:
         include:
           - name: Linux
-            os: ubuntu-22.04
+            os: ubuntu-24.04
             args: --bundles deb,rpm,appimage
             bundle: src-tauri/target/release/bundle
           - name: Windows
@@ -93,6 +93,7 @@ jobs:
 
       - name: Install Linux dependencies
         if: runner.os == 'Linux'
+        timeout-minutes: 10
         run: |
           # Skip the manual-page index rebuild, which can stall the install for many minutes.
           sudo rm -f /var/lib/man-db/auto-update
