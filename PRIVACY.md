@@ -48,6 +48,25 @@ stores). The desktop apps never show ads.
 - The developer sees only what the ad network reports in total, such as how many ads were shown.
   That report does not identify you.
 
+## Your rights in the EU, the EEA and the UK
+
+This section applies once a version of the app shows ads, because only then is personal data
+processed on the developer's behalf.
+
+- **Who is responsible:** Karim Seyam, [postal address], [contact email]. For ads, Google is
+  responsible together with the developer for the data its ad service collects.
+- **Why and on what basis:** to show and measure ads, on the basis of your consent (Article 6(1)(a)
+  GDPR). Storing or reading the advertising identifier on your device also needs your consent.
+- **Your choice:** you are asked before any ad data is collected. Saying no does not limit the app.
+  You can change your answer at any time under Settings.
+- **Where the data goes:** Google may process it outside the EU, including in the United States,
+  under the EU-US Data Privacy Framework and standard contractual clauses.
+- **How long:** the developer keeps none of it. Google keeps it for the periods in its own policy.
+- **Your rights:** access, correction, deletion, restriction, portability, objection, and withdrawing
+  consent. Because the developer holds no data about you, requests about ad data go to Google; the
+  developer will help you reach the right place.
+- **Complaints:** you can complain to the data protection authority of the country where you live.
+
 ## Children
 
 AI Balance is a tool for people who pay for AI subscriptions. It is not directed at children under

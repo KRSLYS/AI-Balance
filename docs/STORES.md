@@ -50,6 +50,54 @@ What is ready in the code, what you still have to do yourself, and what a review
 4. In the review notes, explain that the app reads the user's own usage from their own accounts,
    and point to the sample data.
 
+## If you live in the EU
+
+This is an overview, not legal advice. Details differ by country, so check them with a local
+accountant or lawyer before the first payout.
+
+### Earning money from the app
+
+- **Register the activity.** Ad income is business income, even when small. Most EU countries
+  expect you to register as self-employed or as a business, and to declare the income.
+- **VAT.** AdMob is paid by Google Ireland. Ask an accountant how the reverse charge and your
+  country's small-business VAT exemption apply; some countries require a VAT number for this even
+  below the threshold.
+- **Platform reporting (DAC7).** The stores and Google may report your earnings to your tax
+  authority, and will ask for your tax identification number.
+
+### Trader status (Digital Services Act)
+
+- Both stores ask whether you are a **trader**. An app that earns ad money is a commercial activity,
+  so the honest answer is almost always yes.
+- A trader's **name, postal address, phone number and email are verified and shown publicly** on the
+  store page in the EU. If you do not want your home address there, arrange a business address
+  first. Without a trader declaration, the app is removed from the EU stores.
+- Some countries also require a legal notice with the same details (for example the Impressum in
+  Germany and Austria).
+
+### Ads and consent (GDPR and ePrivacy)
+
+- Reading the advertising identifier needs the user's **consent before any ad request**, with
+  refusing as easy as accepting, and a way to change the answer later.
+- Google requires a **consent platform it has certified** for ads shown in the EEA, the UK and
+  Switzerland. Its own User Messaging Platform is one, and it is free.
+- Without consent you may only request non-personalized or limited ads.
+- With ads you become responsible, together with Google, for that data. The privacy policy must then
+  name you, a contact address and email, the legal basis, and the user's rights; the placeholders
+  in [PRIVACY.md](../PRIVACY.md) are there for this. Accept Google's data processing terms in AdMob.
+- Do not direct the app at children, and set the ad content rating in AdMob.
+
+### Consumer and product rules
+
+- The app is free, so withdrawal rights and price rules do not apply. Describe it truthfully, and
+  state in the listing that it contains ads.
+- **Cyber Resilience Act.** From late 2027 software supplied as part of a commercial activity must
+  meet security requirements, with vulnerability reporting from September 2026. Non-commercial open
+  source is exempt, but an app monetized with ads may count as commercial. Publish a security
+  contact (a `SECURITY.md`) and keep dependencies updated.
+- The **European Accessibility Act** and the **AI Act** are unlikely to apply: the app is not one of
+  the listed services, and it contains no AI system.
+
 ## Ads are not in the code yet
 
 Showing ads needs things only you can provide, and a native SDK that has to be tested on real
