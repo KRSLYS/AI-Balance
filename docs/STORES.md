@@ -110,7 +110,7 @@ phones:
 2. The Google Mobile Ads SDK added to the generated Android and iOS projects, with Google's consent
    form (required in the EEA, the UK and Switzerland) and, on iOS, the tracking permission prompt
    and privacy manifest.
-3. An `app-ads.txt` file at `https://krslys.com/app-ads.txt`, with `krslys.com` listed as the
+3. An `app-ads.txt` file at `https://krslys.be/app-ads.txt`, with `krslys.be` listed as the
    developer website in both stores.
 
 The plan that keeps ads out of the way: one small banner at the bottom of the Usage tab, on Android
