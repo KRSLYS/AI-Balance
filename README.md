@@ -15,6 +15,7 @@ balances. On desktop it lives in the system tray and warns you before a limit ru
 | ChatGPT | Browser (OpenAI), or a device code | Session, Weekly, extra limits, Credits, Credit Limit |
 | Cursor | Browser (cursor.com) | Total Usage, Cursor Models, Other Models, On-Demand |
 | Copilot | Device code (GitHub) | Premium, Chat, Completions, Extra Usage |
+| Kimi | Sign-in link (Kimi Code) | Weekly, Session |
 | OpenRouter | API key or Management key | Balance, Today, This Week, This Month, Key Limit |
 | Z.ai | API key | Session, Weekly, Web Searches |
 | Ollama | API key | Session, Weekly, Monthly, Purchased Credits |
@@ -24,6 +25,8 @@ Every number comes from the provider's own API. AIWallet estimates nothing.
 ## Features
 
 - One card per account, with a bar per limit and the time until it resets.
+- Sign in with a link: AIWallet opens it for you, or copy it to any device or browser where you are
+  already signed in. Nothing to type for most providers.
 - Several accounts per provider. Rename and reorder them.
 - Automatic refresh (every 5 minutes by default) and a Refresh button.
 - A notification when a limit reaches the threshold you choose.
@@ -162,7 +165,7 @@ line in `providers/mod.rs`, and an entry in `src/providers.ts`.
 
 ## بالعربية
 
-**AIWallet** تطبيق يعرض استهلاكك من اشتراكات الذكاء الاصطناعي (Claude و ChatGPT و Cursor و Copilot
+**AIWallet** تطبيق يعرض استهلاكك من اشتراكات الذكاء الاصطناعي (Claude و ChatGPT و Cursor و Copilot و Kimi
 و OpenRouter و Z.ai و Ollama) في مكان واحد، ويعمل على Windows و Linux و macOS و Android و iOS.
 
 - بيانات الدخول تبقى على جهازك ولا تُرسل إلا إلى المزوّد نفسه.

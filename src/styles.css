@@ -536,3 +536,9 @@ input[type="checkbox"] {
     transition: none !important;
   }
 }
+
+.link-field {
+  font: 12px/1.3 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--muted) !important;
+  text-overflow: ellipsis;
+}

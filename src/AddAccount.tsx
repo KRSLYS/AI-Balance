@@ -106,7 +106,7 @@ function BrowserLogin({ provider, onDone }: { provider: ProviderId; onDone: () =
   const [prompt, setPrompt] = useState<LoginPrompt | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [code, setCode] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<"code" | "link" | null>(null);
   const session = useRef<string | null>(null);
   const finished = useRef(false);
 
@@ -124,6 +124,8 @@ function BrowserLogin({ provider, onDone }: { provider: ProviderId; onDone: () =
         if (cancelled) return void api.cancelLogin(started.sessionId);
         session.current = started.sessionId;
         setPrompt(started);
+        // The code is on the clipboard before the page opens, ready to paste.
+        if (started.userCode) navigator.clipboard.writeText(started.userCode).catch(() => {});
         api.open(started.url).catch(() => {});
       })
       .catch((failure) => !cancelled && setError(String(failure)));
@@ -135,11 +137,12 @@ function BrowserLogin({ provider, onDone }: { provider: ProviderId; onDone: () =
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider]);
 
-  const copy = async () => {
-    if (!prompt?.userCode) return;
-    await navigator.clipboard.writeText(prompt.userCode).catch(() => {});
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+  const copy = async (what: "code" | "link") => {
+    const text = what === "code" ? prompt?.userCode : prompt?.url;
+    if (!text) return;
+    await navigator.clipboard.writeText(text).catch(() => {});
+    setCopied(what);
+    setTimeout(() => setCopied(null), 1500);
   };
 
   const submit = async (event: React.FormEvent) => {
@@ -162,17 +165,25 @@ function BrowserLogin({ provider, onDone }: { provider: ProviderId; onDone: () =
           <p>{i18n.t("deviceCode")}</p>
           <div className="code-box">
             <code dir="ltr">{prompt.userCode}</code>
-            <button className="ghost" onClick={copy}>
-              {copied ? i18n.t("copied") : i18n.t("copy")}
+            <button className="ghost" onClick={() => copy("code")}>
+              {copied === "code" ? i18n.t("copied") : i18n.t("copy")}
             </button>
           </div>
         </>
       ) : (
         <p>{i18n.t("signInBrowser")}</p>
       )}
-      <button className="ghost" onClick={() => api.open(prompt.url)}>
-        {i18n.t("openPage")} ↗
-      </button>
+      <div className="actions">
+        <button className="primary" onClick={() => api.open(prompt.url)}>
+          {i18n.t("openLink")} ↗
+        </button>
+        <button className="ghost" onClick={() => copy("link")}>
+          {copied === "link" ? i18n.t("linkCopied") : i18n.t("copyLink")}
+        </button>
+      </div>
+      <input className="link-field" readOnly dir="ltr" value={prompt.url} onFocus={(event) => event.target.select()} aria-label={i18n.t("copyLink")} />
+      {/* A link that returns to a port on this computer only finishes here. */}
+      {!prompt.url.includes("localhost") && <p className="muted">{i18n.t("linkHint")}</p>}
       {prompt.acceptsPaste && (
         <form className="paste" onSubmit={submit}>
           <label>

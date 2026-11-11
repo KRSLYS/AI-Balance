@@ -3,7 +3,7 @@ import { listen } from "@tauri-apps/api/event";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { demoState } from "./demo";
 
-export type ProviderId = "claude" | "codex" | "copilot" | "cursor" | "openrouter" | "zai" | "ollama";
+export type ProviderId = "claude" | "codex" | "copilot" | "cursor" | "kimi" | "openrouter" | "zai" | "ollama";
 
 export type Format =
   | { type: "percent" }
@@ -72,8 +72,16 @@ export const api = {
   addApiKeyAccount: (provider: ProviderId, key: string, label?: string): Promise<Account> =>
     inApp ? invoke("add_api_key_account", { provider, key, label }) : Promise.reject("Demo mode: run the app to add accounts."),
   beginLogin: (provider: ProviderId): Promise<LoginPrompt> =>
-    inApp ? invoke("begin_login", { provider }) : Promise.reject("Demo mode: run the app to add accounts."),
-  submitLoginCode: (sessionId: string, code: string): Promise<void> => invoke("submit_login_code", { sessionId, code }),
+    inApp
+      ? invoke("begin_login", { provider })
+      : Promise.resolve({
+          sessionId: "demo",
+          url: `https://example.com/sign-in/${provider}?code=DEMO-1234`,
+          userCode: provider === "copilot" ? "DEMO-1234" : null,
+          acceptsPaste: provider === "claude",
+        }),
+  submitLoginCode: (sessionId: string, code: string): Promise<void> =>
+    inApp ? invoke("submit_login_code", { sessionId, code }) : Promise.reject("Demo mode: run the app to add accounts."),
   cancelLogin: (sessionId: string): Promise<void> => (inApp ? invoke("cancel_login", { sessionId }) : Promise.resolve()),
   removeAccount: async (id: string): Promise<void> => {
     if (inApp) return invoke("remove_account", { id });
@@ -113,5 +121,6 @@ export const api = {
     const stop = listen<LoginFinished>("login-finished", (event) => handler(event.payload));
     return () => void stop.then((unlisten) => unlisten());
   },
-  open: (url: string): Promise<void> => (inApp ? openUrl(url) : Promise.resolve(void window.open(url, "_blank"))),
+  /** Opens a link in the browser. The demo opens nothing. */
+  open: (url: string): Promise<void> => (inApp ? openUrl(url) : Promise.resolve()),
 };

@@ -4,6 +4,7 @@ pub mod claude;
 pub mod codex;
 pub mod copilot;
 pub mod cursor;
+pub mod kimi;
 pub mod ollama;
 pub mod openrouter;
 pub mod zai;
@@ -58,14 +59,16 @@ fn renewal_lead_ms(kind: ProviderKind) -> i64 {
 }
 
 async fn renew(http: &Client, kind: ProviderKind, credential: &mut Credential) -> Result<()> {
-    let Credential::OAuth { access_token, refresh_token, expires_at, .. } = credential else {
+    let Credential::OAuth { access_token, refresh_token, expires_at, extras } = credential else {
         return Err(ProviderError::SignInExpired);
     };
     let Some(token) = refresh_token.clone() else { return Err(ProviderError::SignInExpired) };
+    let device_id = extras.get(kimi::DEVICE_ID_KEY).cloned().unwrap_or_default();
     let grant = match kind {
         ProviderKind::Claude => claude::refresh(http, &token).await?,
         ProviderKind::Codex => codex::refresh(http, &token).await?,
         ProviderKind::Cursor => cursor::refresh(http, &token).await?,
+        ProviderKind::Kimi => kimi::refresh(http, &token, &device_id).await?,
         _ => return Err(ProviderError::SignInExpired),
     };
     *access_token = grant.access_token;
@@ -82,6 +85,7 @@ async fn read(http: &Client, kind: ProviderKind, credential: &mut Credential) ->
         ProviderKind::Codex => codex::usage(http, credential).await,
         ProviderKind::Copilot => copilot::usage(http, credential).await,
         ProviderKind::Cursor => cursor::usage(http, credential).await,
+        ProviderKind::Kimi => kimi::usage(http, credential).await,
         ProviderKind::OpenRouter => openrouter::usage(http, credential.secret()).await,
         ProviderKind::Zai => zai::usage(http, credential.secret()).await,
         ProviderKind::Ollama => ollama::usage(http, credential.secret()).await,

@@ -16,7 +16,7 @@ use tokio::time::{sleep, timeout, Instant};
 
 use crate::http::{self, Resp};
 use crate::model::{Credential, ProviderKind};
-use crate::providers::{claude, codex, copilot, cursor};
+use crate::providers::{claude, codex, copilot, cursor, kimi};
 
 const BROWSER_SIGN_IN_TIMEOUT: Duration = Duration::from_secs(10 * 60);
 
@@ -38,6 +38,7 @@ pub struct LoginPrompt {
 pub enum Pending {
     AuthCode { kind: ProviderKind, verifier: String, state: String, redirect_uri: String, listener: Option<TcpListener> },
     GitHubDevice { device_code: String, interval: u64, expires_in: u64 },
+    KimiDevice { device_code: String, device_id: String, interval: u64, expires_in: u64 },
     CodexDevice { device_auth_id: String, user_code: String, interval: u64 },
     CursorPoll { uuid: String, verifier: String },
 }
@@ -120,6 +121,23 @@ pub async fn start(http: &Client, kind: ProviderKind, mobile: bool) -> LoginResu
                 expires_in: http::num(&device["expires_in"]).unwrap_or(900.0) as u64,
             };
             Ok((prompt(url, Some(required(&device, "user_code")?), false), pending))
+        }
+        ProviderKind::Kimi => {
+            let device_id = uuid_v4().replace('-', "");
+            let request = kimi::auth_request(http, kimi::DEVICE_CODE_URL, &device_id).form(&[("client_id", kimi::CLIENT_ID)]);
+            let device = decode(&http::send(request).await.map_err(network)?)?;
+            // The complete link carries the code, so there is nothing to type.
+            let (url, user_code) = match http::text(&device["verification_uri_complete"]) {
+                Some(url) => (url, None),
+                None => (required(&device, "verification_uri")?, Some(required(&device, "user_code")?)),
+            };
+            let pending = Pending::KimiDevice {
+                device_code: required(&device, "device_code")?,
+                device_id,
+                interval: http::num(&device["interval"]).unwrap_or(5.0) as u64,
+                expires_in: http::num(&device["expires_in"]).filter(|seconds| *seconds > 0.0).unwrap_or(900.0) as u64,
+            };
+            Ok((prompt(url, user_code, false), pending))
         }
         ProviderKind::Cursor => {
             let (verifier, challenge) = pkce();
@@ -206,6 +224,47 @@ pub async fn finish(http: &Client, pending: Pending, mut pasted: mpsc::Receiver<
             let request = http.get(copilot::USER_URL).bearer_auth(&token).header("Accept", "application/vnd.github+json");
             let user = decode(&http::send(request).await.map_err(network)?)?;
             Ok((required(&user, "login")?, Credential::oauth(token, None, None)))
+        }
+        Pending::KimiDevice { device_code, device_id, interval, expires_in } => {
+            let token = poll(interval, expires_in, || async {
+                let form = [
+                    ("client_id", kimi::CLIENT_ID),
+                    ("device_code", device_code.as_str()),
+                    ("grant_type", "urn:ietf:params:oauth:grant-type:device_code"),
+                ];
+                let request = kimi::auth_request(http, kimi::TOKEN_URL, &device_id).form(&form);
+                let body = http::send(request).await.ok().and_then(|response| response.json()).unwrap_or(Value::Null);
+                if http::text(&body["access_token"]).is_some() {
+                    return Poll::Done(body);
+                }
+                match body["error"].as_str() {
+                    Some("authorization_pending") | None => Poll::Pending,
+                    Some("slow_down") => Poll::SlowDown,
+                    Some("expired_token") => Poll::Failed("The Kimi sign-in link expired.".into()),
+                    Some("access_denied") => Poll::Failed("Kimi sign-in was denied.".into()),
+                    Some(_) => Poll::Failed("Kimi sign-in failed.".into()),
+                }
+            })
+            .await?;
+            let access = required(&token, "access_token")?;
+            let expires_at = http::num(&token["expires_in"])
+                .map(|seconds| crate::model::now_ms() + (seconds * 1000.0) as i64)
+                .or_else(|| http::jwt_expiry_ms(&access));
+            // Kimi has no profile read; name the account from the token when it carries a name.
+            let claims = http::jwt_payload(&access).unwrap_or(Value::Null);
+            let label = ["email", "name", "phone"]
+                .iter()
+                .find_map(|key| http::text(&claims[*key]))
+                .or_else(|| {
+                    http::text(&claims["sub"]).map(|id| {
+                        let tail: String = id.chars().rev().take(6).collect::<Vec<_>>().into_iter().rev().collect();
+                        format!("Kimi {tail}")
+                    })
+                })
+                .unwrap_or_else(|| "Kimi Account".into());
+            let credential =
+                Credential::oauth(access, http::text(&token["refresh_token"]), expires_at).with_extra(kimi::DEVICE_ID_KEY, Some(device_id));
+            Ok((label, credential))
         }
         Pending::CodexDevice { device_auth_id, user_code, interval } => {
             let grant = poll(interval, 900, || async {
