@@ -12,6 +12,8 @@ name: Release
 on:
   push:
     tags: ["v*"]
+    # A branch push starts a release only when it changes .release-version. Tags ignore the path filter.
+    branches: ["**"]
     paths: [".release-version"]
   workflow_dispatch:
     inputs:
