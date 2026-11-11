@@ -2,7 +2,7 @@
 
 Please report a vulnerability privately, not in a public issue.
 
-- Email <security@krslys.com>, or
+- Email <info@krslys.be>, or
 - use **Report a vulnerability** under the repository's Security tab.
 
 Include what you found, how to reproduce it, and the version of AI Balance. You will get an answer

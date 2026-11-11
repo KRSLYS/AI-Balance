@@ -53,8 +53,8 @@ stores). The desktop apps never show ads.
 This section applies once a version of the app shows ads, because only then is personal data
 processed on the developer's behalf.
 
-- **Who is responsible:** KRSLYS BV, [registered address], Belgium, company number [KBO/BCE number],
-  <privacy@krslys.com>. For ads, Google is
+- **Who is responsible:** KRSLYS BV, [registered address], Belgium, company number (KBO/BCE)
+  1026.902.574, <info@krslys.be>. For ads, Google is
   responsible together with the developer for the data its ad service collects.
 - **Why and on what basis:** to show and measure ads, on the basis of your consent (Article 6(1)(a)
   GDPR). Storing or reading the advertising identifier on your device also needs your consent.
@@ -81,6 +81,6 @@ Changes to this policy are published in this file. Its history is public in the 
 
 ## Contact
 
-KRSLYS BV, [registered address], Belgium. Company number (KBO/BCE) and VAT: [number].
+KRSLYS BV, [registered address], Belgium. Company number (KBO/BCE): 1026.902.574. VAT: BE 1026.902.574.
 
-Email <privacy@krslys.com>, or open an issue at <https://github.com/KRSLYS/AIWallet/issues>.
+Email <info@krslys.be>, or open an issue at <https://github.com/KRSLYS/AIWallet/issues>.

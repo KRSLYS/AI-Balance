@@ -98,6 +98,9 @@ export default function SettingsView({ state }: { state: ViewState }) {
           {i18n.t("version")} {state.version}
         </span>
         <span className="muted">{i18n.t("madeBy")} · MIT</span>
+        <span className="muted" dir="ltr">
+          KBO/BCE 1026.902.574 · info@krslys.be
+        </span>
         <button className="link" onClick={() => api.open(REPOSITORY)}>
           {i18n.t("sourceCode")} ↗
         </button>
