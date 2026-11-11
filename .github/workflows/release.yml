@@ -103,7 +103,7 @@ jobs:
       - name: Install and set the version
         run: |
           npm ci
-          npm run set-version -- "${{ needs.prepare.outputs.version }}"
+          node scripts/set-version.mjs "${{ needs.prepare.outputs.version }}"
 
       - name: Build
         run: npx tauri build ${{ matrix.args }}
@@ -156,7 +156,7 @@ jobs:
       - name: Install and set the version
         run: |
           npm ci
-          npm run set-version -- "$VERSION"
+          node scripts/set-version.mjs "$VERSION"
 
       - name: Generate the Android project
         run: |
@@ -234,7 +234,7 @@ jobs:
       - name: Install and set the version
         run: |
           npm ci
-          npm run set-version -- "$VERSION"
+          node scripts/set-version.mjs "$VERSION"
 
       - name: Generate the Xcode project
         run: |
@@ -259,13 +259,12 @@ jobs:
           echo "::warning::No Apple signing secrets. Building an unsigned IPA, which installs only through a sideloading tool that signs it with your Apple ID. See the README."
           cd src-tauri/gen/apple
           # Turn code signing off for every target, then let Xcode archive the app.
-          cat >> project.yml <<'YAML'
-          settings:
-            base:
-              CODE_SIGNING_ALLOWED: "NO"
-              CODE_SIGNING_REQUIRED: "NO"
-              CODE_SIGN_IDENTITY: ""
-          YAML
+          ruby -ryaml -e '
+            project = YAML.load_file("project.yml")
+            base = ((project["settings"] ||= {})["base"] ||= {})
+            base.merge!("CODE_SIGNING_ALLOWED" => "NO", "CODE_SIGNING_REQUIRED" => "NO", "CODE_SIGN_IDENTITY" => "")
+            File.write("project.yml", project.to_yaml)
+          '
           xcodegen generate
           cd "$GITHUB_WORKSPACE"
           # The archive step produces the app; the export step needs a signature and is expected to fail.
