@@ -48,7 +48,7 @@ Every number comes from the provider's own API. AI Balance estimates nothing.
 
 ## Install
 
-Download the file for your system from the [latest release](https://github.com/KRSLYS/AIWallet/releases/latest):
+Download the file for your system from the [latest release](https://github.com/KRSLYS/AI-Balance/releases/latest):
 
 | System | File |
 |---|---|
@@ -77,6 +77,9 @@ git tag v0.1.0
 ```bash
 git push origin v0.1.0
 ```
+
+Changing the version in [`.release-version`](.release-version) and pushing does the same without a
+tag: the workflow creates the tag itself.
 
 The version comes from the tag, so there is nothing to edit first. A tag with a suffix, such as
 `v0.2.0-beta.1`, is published as a pre-release.

@@ -5,7 +5,7 @@ import { api, inApp, type Settings, type ViewState } from "./api";
 import { useI18n } from "./i18n";
 import { LANGUAGES } from "./locales";
 
-const REPOSITORY = "https://github.com/KRSLYS/AIWallet";
+const REPOSITORY = "https://github.com/KRSLYS/AI-Balance";
 const PRIVACY = "https://aibalance.krslys.be/privacy.html";
 
 export default function SettingsView({ state }: { state: ViewState }) {

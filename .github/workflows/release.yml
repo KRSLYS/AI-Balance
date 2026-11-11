@@ -3,6 +3,8 @@ name: Release
 # Builds AI Balance for Windows, Linux, macOS, Android and iOS.
 #
 #   - Push a tag like v1.2.3      -> builds everything and publishes a GitHub Release.
+#   - Change .release-version     -> the same, for the version written in that file. The workflow
+#                                    creates the tag itself.
 #   - Run it by hand (Actions tab) -> builds everything; publishes only when "publish" is ticked.
 #
 # The version always comes from the tag (or the "version" input), so there is nothing to edit first.
@@ -10,6 +12,7 @@ name: Release
 on:
   push:
     tags: ["v*"]
+    paths: [".release-version"]
   workflow_dispatch:
     inputs:
       version:
@@ -38,13 +41,19 @@ jobs:
       version: ${{ steps.version.outputs.version }}
       publish: ${{ steps.version.outputs.publish }}
     steps:
+      - uses: actions/checkout@v4
+
       - id: version
         env:
           INPUT_VERSION: ${{ inputs.version }}
           INPUT_PUBLISH: ${{ inputs.publish }}
         run: |
-          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+          if [ "$GITHUB_EVENT_NAME" = "push" ] && [ "$GITHUB_REF_TYPE" = "tag" ]; then
             version="${GITHUB_REF_NAME#v}"
+            publish=true
+          elif [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            version="$(tr -d '[:space:]' < .release-version)"
+            version="${version#v}"
             publish=true
           else
             version="${INPUT_VERSION#v}"
