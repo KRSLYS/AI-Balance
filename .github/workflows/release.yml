@@ -269,6 +269,8 @@ jobs:
       - name: Generate the Xcode project
         run: |
           brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
+          # The project cannot be generated without a team. An unsigned build never uses it.
+          export APPLE_DEVELOPMENT_TEAM="${APPLE_DEVELOPMENT_TEAM:-UNSIGNED000}"
           npx tauri ios init --ci
           npx tauri icon assets/icon.png
 
@@ -298,7 +300,7 @@ jobs:
           xcodegen generate
           cd "$GITHUB_WORKSPACE"
           # The archive step produces the app; the export step needs a signature and is expected to fail.
-          npx tauri ios build || true
+          APPLE_DEVELOPMENT_TEAM=UNSIGNED000 npx tauri ios build || true
           app="$(find src-tauri/gen/apple -path '*.xcarchive/Products/Applications/*.app' -maxdepth 6 -type d | head -n 1)"
           if [ -z "$app" ]; then
             echo "::error::Xcode produced no app to package."
