@@ -189,7 +189,14 @@ pub struct Settings {
 
 impl Default for Settings {
     fn default() -> Self {
-        Self { refresh_minutes: 5, notifications: true, notify_threshold: 90, language: "system".into(), theme: "system".into(), onboarded: false }
+        Self {
+            refresh_minutes: 5,
+            notifications: true,
+            notify_threshold: 90,
+            language: "system".into(),
+            theme: "system".into(),
+            onboarded: false,
+        }
     }
 }
 
