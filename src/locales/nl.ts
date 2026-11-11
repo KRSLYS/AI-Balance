@@ -57,7 +57,7 @@ export const nl: Locale = {
     dark: "Donker",
     launchAtLogin: "Openen bij inloggen",
     version: "Versie",
-    madeBy: "Gemaakt door Karim Seyam",
+    madeBy: "Gemaakt door KRSLYS BV",
     sourceCode: "Broncode",
     demoBanner: "Demogegevens. Start de app om je eigen accounts te zien.",
     privacy: "Inloggegevens blijven op dit apparaat en gaan alleen naar hun eigen aanbieder.",

@@ -1,5 +1,5 @@
 //! AI Balance: track AI subscriptions and usage limits.
-//! Copyright (c) 2026 Karim Seyam. MIT License.
+//! Copyright (c) 2026 KRSLYS BV. MIT License.
 
 mod http;
 mod login;

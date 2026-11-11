@@ -57,7 +57,7 @@ export const de: Locale = {
     dark: "Dunkel",
     launchAtLogin: "Beim Anmelden starten",
     version: "Version",
-    madeBy: "Entwickelt von Karim Seyam",
+    madeBy: "Entwickelt von KRSLYS BV",
     sourceCode: "Quellcode",
     demoBanner: "Demodaten. Starte die App, um deine eigenen Konten zu sehen.",
     privacy: "Zugangsdaten bleiben auf diesem Gerät und werden nur an den jeweiligen Anbieter gesendet.",

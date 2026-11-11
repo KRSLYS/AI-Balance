@@ -183,4 +183,4 @@ menu bar app. AI Balance is an independent project with its own code and is not 
 
 ## License
 
-[MIT](LICENSE) © 2026 Karim Seyam
+[MIT](LICENSE) © 2026 KRSLYS BV

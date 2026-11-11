@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "description": "Track your AI subscriptions and usage limits on Windows, Linux, macOS, Android and iOS.",
-  "author": "Karim Seyam",
+  "author": "KRSLYS BV",
   "license": "MIT",
   "type": "module",
   "scripts": {

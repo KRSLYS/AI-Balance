@@ -57,7 +57,7 @@ export const zh: Locale = {
     dark: "深色",
     launchAtLogin: "开机时启动",
     version: "版本",
-    madeBy: "由 Karim Seyam 开发",
+    madeBy: "由 KRSLYS BV 开发",
     sourceCode: "源代码",
     demoBanner: "演示数据。运行应用后可查看你自己的账户。",
     privacy: "凭据只保存在此设备上，并且只会发送给对应的服务商。",

@@ -57,7 +57,7 @@ export const ar: Locale = {
     dark: "داكن",
     launchAtLogin: "التشغيل عند بدء النظام",
     version: "الإصدار",
-    madeBy: "من تطوير Karim Seyam",
+    madeBy: "من تطوير KRSLYS BV",
     sourceCode: "الكود المصدري",
     demoBanner: "بيانات تجريبية. شغّل التطبيق لترى حساباتك.",
     privacy: "بيانات الدخول تبقى على هذا الجهاز ولا تُرسل إلا إلى مزوّدها.",

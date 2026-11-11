@@ -56,7 +56,7 @@ export const en = {
     dark: "Dark",
     launchAtLogin: "Launch at login",
     version: "Version",
-    madeBy: "Made by Karim Seyam",
+    madeBy: "Made by KRSLYS BV",
     sourceCode: "Source code",
     demoBanner: "Demo data. Run the app to see your own accounts.",
     privacy: "Credentials stay on this device and are sent only to their own provider.",

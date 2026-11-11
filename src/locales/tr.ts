@@ -57,7 +57,7 @@ export const tr: Locale = {
     dark: "Koyu",
     launchAtLogin: "Oturum açılışında başlat",
     version: "Sürüm",
-    madeBy: "Geliştiren: Karim Seyam",
+    madeBy: "Geliştiren: KRSLYS BV",
     sourceCode: "Kaynak kodu",
     demoBanner: "Örnek veriler. Kendi hesaplarınızı görmek için uygulamayı çalıştırın.",
     privacy: "Kimlik bilgileri bu cihazda kalır ve yalnızca kendi sağlayıcısına gönderilir.",

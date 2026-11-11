@@ -173,7 +173,7 @@ impl Store {
 mod keychain {
     use crate::model::Credential;
 
-    const SERVICE: &str = "com.karimseyam.aibalance";
+    const SERVICE: &str = "com.krslys.aibalance";
 
     fn entry(id: &str) -> Option<keyring::Entry> {
         keyring::Entry::new(SERVICE, id).ok()

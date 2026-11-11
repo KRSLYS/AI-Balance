@@ -20,6 +20,9 @@ What is ready in the code, what you still have to do yourself, and what a review
 
 ### Both stores
 
+The app is published by **KRSLYS BV**, so open every account in the company's name: both stores then
+ask for the company number and verify it (Apple also needs a D-U-N-S number, which is free).
+
 1. Accounts: Google Play Console (a one-time $25) and the Apple Developer Program ($99 a year).
 2. Store listing: name, short and long description, screenshots for phone and tablet sizes, a
    1024×1024 icon (`assets/icon.png`), a support address and the privacy policy link.
@@ -41,7 +44,7 @@ What is ready in the code, what you still have to do yourself, and what a review
 ### App Store
 
 1. Add the four `APPLE_*` secrets, create the app in App Store Connect with the bundle identifier
-   `com.karimseyam.aibalance`, and upload the `.ipa` with Transporter.
+   `com.krslys.aibalance`, and upload the `.ipa` with Transporter.
 2. Fill in **App Privacy**. Without ads: "Data not collected". With ads: identifiers, usage data and
    coarse location, used for third-party advertising, and "used to track you" if ads are
    personalized.
@@ -107,7 +110,8 @@ phones:
 2. The Google Mobile Ads SDK added to the generated Android and iOS projects, with Google's consent
    form (required in the EEA, the UK and Switzerland) and, on iOS, the tracking permission prompt
    and privacy manifest.
-3. An `app-ads.txt` file on a website you own, listed as the developer website in both stores.
+3. An `app-ads.txt` file at `https://krslys.com/app-ads.txt`, with `krslys.com` listed as the
+   developer website in both stores.
 
 The plan that keeps ads out of the way: one small banner at the bottom of the Usage tab, on Android
 and iOS only, never over content, never full-screen, and none on desktop.

@@ -2,16 +2,16 @@
 
 _Last updated: 11 November 2026_
 
-AI Balance is an open-source app by Karim Seyam that shows how much of your AI subscriptions you have
+AI Balance is an open-source app published by KRSLYS BV, a company registered in Belgium, that shows how much of your AI subscriptions you have
 used. This policy covers the desktop apps and the Android and iOS apps.
 
 ## The short version
 
-- AI Balance has no server. Nothing you do in the app is sent to the developer.
+- AI Balance has no server. Nothing you do in the app is sent to KRSLYS BV.
 - Your sign-ins and API keys stay on your device and are sent only to the provider they belong to.
 - The app has no analytics, no crash reporting and no tracking of its own.
-- The Android and iOS versions from the app stores may show a small ad. The ad network, not the
-  developer, receives the data that ads need. See [Advertising](#advertising).
+- The Android and iOS versions from the app stores may show a small ad. The ad network, not
+  KRSLYS BV, receives the data that ads need. See [Advertising](#advertising).
 
 ## What the app stores on your device
 
@@ -29,7 +29,7 @@ To show your usage, the app talks directly to the providers whose accounts you a
 Ollama. Each request carries only that provider's own credential. Each provider handles the request
 under its own privacy policy.
 
-The app sends nothing to the developer or to anyone else.
+The app sends nothing to KRSLYS BV or to anyone else.
 
 ## Advertising
 
@@ -45,7 +45,7 @@ stores). The desktop apps never show ads.
 - You can reset or delete your advertising identifier, or turn off ad personalization, in your
   device's settings.
 - The ad network never receives your accounts, credentials or usage numbers.
-- The developer sees only what the ad network reports in total, such as how many ads were shown.
+- KRSLYS BV sees only what the ad network reports in total, such as how many ads were shown.
   That report does not identify you.
 
 ## Your rights in the EU, the EEA and the UK
@@ -53,7 +53,8 @@ stores). The desktop apps never show ads.
 This section applies once a version of the app shows ads, because only then is personal data
 processed on the developer's behalf.
 
-- **Who is responsible:** Karim Seyam, [postal address], [contact email]. For ads, Google is
+- **Who is responsible:** KRSLYS BV, [registered address], Belgium, company number [KBO/BCE number],
+  <privacy@krslys.com>. For ads, Google is
   responsible together with the developer for the data its ad service collects.
 - **Why and on what basis:** to show and measure ads, on the basis of your consent (Article 6(1)(a)
   GDPR). Storing or reading the advertising identifier on your device also needs your consent.
@@ -66,6 +67,8 @@ processed on the developer's behalf.
   consent. Because the developer holds no data about you, requests about ad data go to Google; the
   developer will help you reach the right place.
 - **Complaints:** you can complain to the data protection authority of the country where you live.
+  For Belgium that is the Gegevensbeschermingsautoriteit / Autorité de protection des données
+  (<https://www.dataprotectionauthority.be>).
 
 ## Children
 
@@ -78,4 +81,6 @@ Changes to this policy are published in this file. Its history is public in the 
 
 ## Contact
 
-Questions: open an issue at <https://github.com/KRSLYS/AIWallet/issues>.
+KRSLYS BV, [registered address], Belgium. Company number (KBO/BCE) and VAT: [number].
+
+Email <privacy@krslys.com>, or open an issue at <https://github.com/KRSLYS/AIWallet/issues>.

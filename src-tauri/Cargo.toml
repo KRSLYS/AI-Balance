@@ -2,7 +2,7 @@
 name = "aibalance"
 version = "0.1.0"
 description = "Track your AI subscriptions and usage limits"
-authors = ["Karim Seyam"]
+authors = ["KRSLYS BV"]
 license = "MIT"
 edition = "2021"
 rust-version = "1.77.2"

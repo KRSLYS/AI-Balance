@@ -3,7 +3,7 @@
   "productName": "AI Balance",
   "mainBinaryName": "aibalance",
   "version": "0.1.0",
-  "identifier": "com.karimseyam.aibalance",
+  "identifier": "com.krslys.aibalance",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -28,8 +28,8 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "publisher": "Karim Seyam",
-    "copyright": "Copyright © 2026 Karim Seyam",
+    "publisher": "KRSLYS BV",
+    "copyright": "Copyright © 2026 KRSLYS BV",
     "category": "DeveloperTool",
     "shortDescription": "Track your AI subscriptions and usage limits",
     "longDescription": "AI Balance shows how much of each AI plan you have used: session and weekly limits, credits and balances, all in one place.",

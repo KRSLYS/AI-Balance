@@ -57,7 +57,7 @@ export const it: Locale = {
     dark: "Scuro",
     launchAtLogin: "Avvia all’accesso",
     version: "Versione",
-    madeBy: "Creato da Karim Seyam",
+    madeBy: "Creato da KRSLYS BV",
     sourceCode: "Codice sorgente",
     demoBanner: "Dati dimostrativi. Avvia l’app per vedere i tuoi account.",
     privacy: "Le credenziali restano su questo dispositivo e vengono inviate solo al rispettivo fornitore.",

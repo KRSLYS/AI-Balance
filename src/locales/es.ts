@@ -57,7 +57,7 @@ export const es: Locale = {
     dark: "Oscuro",
     launchAtLogin: "Abrir al iniciar sesión",
     version: "Versión",
-    madeBy: "Creado por Karim Seyam",
+    madeBy: "Creado por KRSLYS BV",
     sourceCode: "Código fuente",
     demoBanner: "Datos de demostración. Abre la app para ver tus cuentas.",
     privacy: "Las credenciales se quedan en este dispositivo y solo se envían a su proveedor.",
