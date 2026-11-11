@@ -6,7 +6,7 @@ import { useI18n } from "./i18n";
 import { LANGUAGES } from "./locales";
 
 const REPOSITORY = "https://github.com/KRSLYS/AIWallet";
-const PRIVACY = `${REPOSITORY}/blob/main/PRIVACY.md`;
+const PRIVACY = "https://aibalance.krslys.be/privacy.html";
 
 export default function SettingsView({ state }: { state: ViewState }) {
   const i18n = useI18n();

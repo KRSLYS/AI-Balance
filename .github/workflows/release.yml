@@ -106,7 +106,12 @@ jobs:
           node scripts/set-version.mjs "${{ needs.prepare.outputs.version }}"
 
       - name: Build
-        run: npx tauri build ${{ matrix.args }}
+        shell: bash
+        run: |
+          args="${{ matrix.args }}"
+          # RPM does not accept a version with a pre-release suffix such as 1.2.3-beta.1.
+          case "${{ needs.prepare.outputs.version }}" in *-*) args="${args/deb,rpm,appimage/deb,appimage}" ;; esac
+          npx tauri build $args
 
       - name: Collect installers
         shell: bash
