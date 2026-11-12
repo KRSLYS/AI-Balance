@@ -73,6 +73,9 @@ export const en = {
     updateAvailable: "Version {v} is available.",
     download: "Download",
     checkUpdates: "Check for updates",
+    priority: "Priority",
+    allUsage: "All Usage",
+    openApp: "Open AI Balance",
   },
   labels: {
     Session: "Session",

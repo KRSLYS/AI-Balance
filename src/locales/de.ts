@@ -74,6 +74,9 @@ export const de: Locale = {
     updateAvailable: "Version {v} ist verfügbar.",
     download: "Herunterladen",
     checkUpdates: "Nach Updates suchen",
+    priority: "Priorität",
+    allUsage: "Gesamte Nutzung",
+    openApp: "AI Balance öffnen",
   },
   labels: {
     Session: "Sitzung",

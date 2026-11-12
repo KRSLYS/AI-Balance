@@ -32,7 +32,10 @@ Every number comes from the provider's own API. AI Balance estimates nothing.
 - Several accounts per provider, grouped together. Rename and reorder them.
 - Automatic refresh (every 5 minutes by default) and a Refresh button.
 - A notification when a limit reaches the threshold you choose.
-- Desktop: system tray icon whose tooltip shows your fullest limits, close-to-tray, launch at login.
+- Desktop: a small panel beside the tray icon with your limits by priority, close-to-tray, launch at
+  login. On macOS the fullest limit shows next to the icon.
+- Android: a home-screen widget with your three fullest limits.
+- Tells you when a newer version is out.
 - 12 languages, chosen on first launch: English, العربية, 简体中文, Français, Deutsch, Español,
   Italiano, Português, Nederlands, Polski, Русский, Türkçe. Light and dark themes.
 

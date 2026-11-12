@@ -386,6 +386,20 @@ fn set_settings(app: AppHandle, state: State<'_, AppState>, settings: Settings) 
     saved
 }
 
+/// Opens the full window, from the tray panel.
+#[tauri::command]
+fn show_main(app: AppHandle) {
+    #[cfg(desktop)]
+    {
+        if let Some(panel) = app.get_webview_window("panel") {
+            let _ = panel.hide();
+        }
+        show_window(&app);
+    }
+    #[cfg(mobile)]
+    let _ = app;
+}
+
 // ----- tray (desktop) -----
 
 #[cfg(desktop)]
@@ -420,8 +434,8 @@ fn build_tray(app: &AppHandle) -> tauri::Result<()> {
             _ => {}
         })
         .on_tray_icon_event(|tray, event| {
-            if let TrayIconEvent::Click { button: MouseButton::Left, button_state: MouseButtonState::Up, .. } = event {
-                show_window(tray.app_handle());
+            if let TrayIconEvent::Click { button: MouseButton::Left, button_state: MouseButtonState::Up, rect, .. } = event {
+                toggle_panel(tray.app_handle(), rect);
             }
         });
     if let Some(icon) = app.default_window_icon() {
@@ -429,6 +443,63 @@ fn build_tray(app: &AppHandle) -> tauri::Result<()> {
     }
     tray.build(app)?;
     Ok(())
+}
+
+/// Creates the small panel that opens next to the tray icon. It stays hidden until the icon is clicked.
+#[cfg(desktop)]
+fn build_panel(app: &AppHandle) -> tauri::Result<()> {
+    tauri::WebviewWindowBuilder::new(app, "panel", tauri::WebviewUrl::App("index.html#panel".into()))
+        .title("AI Balance")
+        .inner_size(360.0, 520.0)
+        .decorations(false)
+        .resizable(false)
+        .always_on_top(true)
+        .skip_taskbar(true)
+        .visible(false)
+        .build()?;
+    Ok(())
+}
+
+/// Shows the panel beside the tray icon, or hides it when it is already open.
+#[cfg(desktop)]
+fn toggle_panel(app: &AppHandle, icon: tauri::Rect) {
+    let Some(panel) = app.get_webview_window("panel") else { return show_window(app) };
+    if panel.is_visible().unwrap_or(false) {
+        let _ = panel.hide();
+        return;
+    }
+    let scale = panel.scale_factor().unwrap_or(1.0);
+    let at = icon.position.to_physical::<f64>(scale);
+    let icon_size = icon.size.to_physical::<f64>(scale);
+    let (width, height) = panel.outer_size().map(|size| (size.width as f64, size.height as f64)).unwrap_or((360.0, 520.0));
+    let (x, y) = match panel.monitor_from_point(at.x, at.y) {
+        Ok(Some(monitor)) => {
+            let screen =
+                (monitor.position().x as f64, monitor.position().y as f64, monitor.size().width as f64, monitor.size().height as f64);
+            panel_position((at.x, at.y, icon_size.width, icon_size.height), (width, height), screen)
+        }
+        _ => (at.x + icon_size.width / 2.0 - width / 2.0, at.y + icon_size.height + PANEL_GAP),
+    };
+    let _ = panel.set_position(tauri::PhysicalPosition::new(x, y));
+    let _ = panel.show();
+    let _ = panel.set_focus();
+}
+
+#[cfg(any(desktop, test))]
+const PANEL_GAP: f64 = 6.0;
+
+/// Where the panel goes: centered on the icon, below it when the icon is in the top half of the
+/// screen (a menu bar) and above it otherwise (a taskbar), and never off the screen.
+/// `icon` and `screen` are `(x, y, width, height)`.
+#[cfg(any(desktop, test))]
+fn panel_position(icon: (f64, f64, f64, f64), panel: (f64, f64), screen: (f64, f64, f64, f64)) -> (f64, f64) {
+    let (left, top, right, bottom) = (screen.0, screen.1, screen.0 + screen.2, screen.1 + screen.3);
+    let x = icon.0 + icon.2 / 2.0 - panel.0 / 2.0;
+    let y = if icon.1 > (top + bottom) / 2.0 { icon.1 - panel.1 - PANEL_GAP } else { icon.1 + icon.3 + PANEL_GAP };
+    (
+        x.clamp(left + PANEL_GAP, (right - panel.0 - PANEL_GAP).max(left + PANEL_GAP)),
+        y.clamp(top + PANEL_GAP, (bottom - panel.1 - PANEL_GAP).max(top + PANEL_GAP)),
+    )
 }
 
 /// Puts the three fullest limits in the tray icon's tooltip.
@@ -442,6 +513,9 @@ fn update_tray(app: &AppHandle, state: &AppState) {
         limits.iter().take(3).map(|(name, percent)| format!("{name}: {percent:.0}%")).collect::<Vec<_>>().join("\n")
     };
     let _ = tray.set_tooltip(Some(tooltip));
+    // macOS shows text beside the icon: the fullest limit, as in "93%".
+    #[cfg(target_os = "macos")]
+    let _ = tray.set_title(limits.first().map(|(_, percent)| format!("{percent:.0}%")));
 }
 
 #[cfg(mobile)]
@@ -481,6 +555,8 @@ pub fn run() {
             {
                 if let Err(error) = build_tray(app.handle()) {
                     eprintln!("aibalance: no tray icon: {error}");
+                } else if let Err(error) = build_panel(app.handle()) {
+                    eprintln!("aibalance: no tray panel: {error}");
                 }
                 // Started at login: stay in the tray until asked for.
                 if std::env::args().any(|argument| argument == "--hidden") && app.tray_by_id("main").is_some() {
@@ -503,11 +579,16 @@ pub fn run() {
         .on_window_event(|window, event| {
             // Closing the window keeps the app in the tray, when there is a tray to bring it back from.
             #[cfg(desktop)]
-            if let tauri::WindowEvent::CloseRequested { api, .. } = event {
-                if window.app_handle().tray_by_id("main").is_some() {
+            match event {
+                tauri::WindowEvent::CloseRequested { api, .. } if window.app_handle().tray_by_id("main").is_some() => {
                     api.prevent_close();
                     let _ = window.hide();
                 }
+                // The panel closes when the user clicks anywhere else.
+                tauri::WindowEvent::Focused(false) if window.label() == "panel" => {
+                    let _ = window.hide();
+                }
+                _ => {}
             }
             #[cfg(mobile)]
             let _ = (window, event);
@@ -522,8 +603,34 @@ pub fn run() {
             remove_account,
             rename_account,
             move_account,
-            set_settings
+            set_settings,
+            show_main
         ])
         .run(tauri::generate_context!())
         .expect("error while running AI Balance");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const SCREEN: (f64, f64, f64, f64) = (0.0, 0.0, 1920.0, 1080.0);
+    const PANEL: (f64, f64) = (360.0, 520.0);
+
+    #[test]
+    fn the_panel_opens_below_a_menu_bar_icon() {
+        assert_eq!(panel_position((1000.0, 0.0, 24.0, 24.0), PANEL, SCREEN), (832.0, 30.0));
+    }
+
+    #[test]
+    fn the_panel_opens_above_a_taskbar_icon_and_stays_on_screen() {
+        let (x, y) = panel_position((1890.0, 1050.0, 24.0, 24.0), PANEL, SCREEN);
+        assert_eq!((x, y), (1920.0 - 360.0 - PANEL_GAP, 1050.0 - 520.0 - PANEL_GAP));
+    }
+
+    #[test]
+    fn the_panel_respects_a_second_monitor_s_origin() {
+        let (x, _) = panel_position((1925.0, 0.0, 24.0, 24.0), PANEL, (1920.0, 0.0, 1920.0, 1080.0));
+        assert_eq!(x, 1920.0 + PANEL_GAP);
+    }
 }

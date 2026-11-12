@@ -74,6 +74,9 @@ export const zh: Locale = {
     updateAvailable: "新版本 {v} 可用。",
     download: "下载",
     checkUpdates: "检查更新",
+    priority: "优先",
+    allUsage: "全部用量",
+    openApp: "打开 AI Balance",
   },
   labels: {
     Session: "会话",

@@ -112,6 +112,7 @@ export const api = {
     demoChanged();
     return settings;
   },
+  showMain: (): Promise<void> => (inApp ? invoke("show_main") : Promise.resolve()),
   onState: (handler: (state: ViewState) => void): (() => void) => {
     if (!inApp) {
       demoListeners.add(handler);

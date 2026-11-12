@@ -2,6 +2,6 @@
   "identifier": "desktop",
   "description": "Desktop-only permissions",
   "platforms": ["linux", "macOS", "windows"],
-  "windows": ["main"],
+  "windows": ["main", "panel"],
   "permissions": ["autostart:default"]
 }

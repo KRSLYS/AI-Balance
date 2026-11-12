@@ -74,6 +74,9 @@ export const ar: Locale = {
     updateAvailable: "الإصدار {v} متاح.",
     download: "تنزيل",
     checkUpdates: "التحقق من التحديثات",
+    priority: "الأولوية",
+    allUsage: "كل الاستخدام",
+    openApp: "فتح AI Balance",
   },
   labels: {
     Session: "الجلسة",

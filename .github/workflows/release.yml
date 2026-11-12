@@ -197,6 +197,7 @@ jobs:
         run: |
           npx tauri android init --ci
           npx tauri icon assets/icon.png
+          node scripts/add-android-widget.mjs
 
       - name: Build the APK
         run: npx tauri android build --apk --aab --target aarch64 armv7

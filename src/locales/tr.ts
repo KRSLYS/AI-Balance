@@ -74,6 +74,9 @@ export const tr: Locale = {
     updateAvailable: "{v} sürümü yayımlandı.",
     download: "İndir",
     checkUpdates: "Güncellemeleri denetle",
+    priority: "Öncelik",
+    allUsage: "Tüm kullanım",
+    openApp: "AI Balance’ı aç",
   },
   labels: {
     Session: "Oturum",

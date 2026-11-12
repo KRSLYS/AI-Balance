@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="widget_title">AI Balance</string>
+  <string name="widget_empty">Open AI Balance to add an account.</string>
+  <string name="widget_description">Your fullest AI limits at a glance.</string>
+  <color name="widget_surface">#FFFFFFFF</color>
+  <color name="widget_text">#FF12141A</color>
+  <color name="widget_muted">#FF667085</color>
+  <color name="widget_track">#FFECEEF2</color>
+  <color name="widget_accent">#FF4F46E5</color>
+</resources>

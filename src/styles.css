@@ -910,3 +910,107 @@ input[type="checkbox"] {
   background: var(--accent-soft);
   color: var(--text);
 }
+
+/* ----- tray panel ----- */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 10px;
+  gap: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.segments {
+  display: flex;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--track);
+}
+
+.segments button {
+  flex: 1;
+  padding: 6px 8px;
+  border-radius: 9px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.segments button.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: fade 0.2s ease both;
+}
+
+.panel-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.panel-group header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.panel-group header .muted {
+  flex: 1;
+  font-size: 12px;
+}
+
+.compact {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(40px, 1fr) auto 58px;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.panel-body > .compact {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.compact .bar {
+  height: 6px;
+}
+
+.compact-name {
+  font-weight: 500;
+}
+
+.compact-reset {
+  white-space: nowrap;
+  font-size: 12px;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.panel-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-foot .ghost {
+  padding: 7px 9px;
+}

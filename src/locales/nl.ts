@@ -74,6 +74,9 @@ export const nl: Locale = {
     updateAvailable: "Versie {v} is beschikbaar.",
     download: "Downloaden",
     checkUpdates: "Controleren op updates",
+    priority: "Prioriteit",
+    allUsage: "Al het gebruik",
+    openApp: "AI Balance openen",
   },
   labels: {
     Session: "Sessie",

@@ -74,6 +74,9 @@ export const ru: Locale = {
     updateAvailable: "Доступна версия {v}.",
     download: "Скачать",
     checkUpdates: "Проверять обновления",
+    priority: "Важное",
+    allUsage: "Всё использование",
+    openApp: "Открыть AI Balance",
   },
   labels: {
     Session: "Сессия",
