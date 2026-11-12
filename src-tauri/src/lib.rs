@@ -1,6 +1,7 @@
 //! AI Balance: track AI subscriptions and usage limits.
 //! Copyright (c) 2026 KRSLYS BV. MIT License.
 
+mod ads;
 mod http;
 mod login;
 mod model;
@@ -63,6 +64,8 @@ struct ViewState {
     version: &'static str,
     update: Option<update::Update>,
     edition: Edition,
+    /// This build shows an ad, so the interface starts it and offers the consent choices.
+    ads: bool,
     /// The providers this build offers, in the order to list them.
     providers: Vec<ProviderKind>,
 }
@@ -76,6 +79,7 @@ fn view(state: &AppState) -> ViewState {
         version: env!("CARGO_PKG_VERSION"),
         update: state.update.lock().unwrap().clone(),
         edition: Edition::current(),
+        ads: ads::enabled(),
         providers: Edition::current().providers(),
     }
 }
@@ -433,6 +437,22 @@ fn show_main(app: AppHandle) {
     let _ = app;
 }
 
+/// Starts the banner ad, after consent. Returns its height so the interface can leave it room.
+#[tauri::command]
+async fn ads_start() -> u32 {
+    tauri::async_runtime::spawn_blocking(ads::start).await.unwrap_or(0)
+}
+
+#[tauri::command]
+async fn ads_privacy_options_required() -> bool {
+    tauri::async_runtime::spawn_blocking(ads::privacy_options_required).await.unwrap_or(false)
+}
+
+#[tauri::command]
+async fn ads_show_privacy_options() {
+    let _ = tauri::async_runtime::spawn_blocking(ads::show_privacy_options).await;
+}
+
 // ----- tray (desktop) -----
 
 #[cfg(desktop)]
@@ -578,6 +598,17 @@ pub fn run() {
                 })
                 .build(),
         );
+        // The ad plugin exists only in a store build that was given an ad unit.
+        if ads::enabled() {
+            builder = builder.plugin(
+                tauri::plugin::Builder::<tauri::Wry>::new("ads")
+                    .setup(|_app, api| {
+                        ads::register(api.register_android_plugin("com.krslys.aibalance", "AdsPlugin")?);
+                        Ok(())
+                    })
+                    .build(),
+            );
+        }
     }
     builder
         .plugin(tauri_plugin_opener::init())
@@ -650,7 +681,10 @@ pub fn run() {
             rename_account,
             move_account,
             set_settings,
-            show_main
+            show_main,
+            ads_start,
+            ads_privacy_options_required,
+            ads_show_privacy_options
         ])
         .run(tauri::generate_context!())
         .expect("error while running AI Balance");

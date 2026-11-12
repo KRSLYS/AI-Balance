@@ -80,6 +80,7 @@ export const zh: Locale = {
     organization: "GitHub 组织",
     website: "网站",
     support: "支持本项目",
+    adChoices: "广告隐私选项",
   },
   labels: {
     Session: "会话",

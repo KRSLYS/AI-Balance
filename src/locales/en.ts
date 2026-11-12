@@ -79,6 +79,7 @@ export const en = {
     organization: "GitHub organization",
     website: "Website",
     support: "Support the project",
+    adChoices: "Ad privacy choices",
   },
   labels: {
     Session: "Session",

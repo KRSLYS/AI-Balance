@@ -1,0 +1,10 @@
+{
+  "android": {
+    "appId": "ca-app-pub-2567013728397875~5388001464",
+    "bannerUnitId": "ca-app-pub-2567013728397875/8888262777"
+  },
+  "test": {
+    "appId": "ca-app-pub-3940256099942544~3347511713",
+    "bannerUnitId": "ca-app-pub-3940256099942544/9214589741"
+  }
+}

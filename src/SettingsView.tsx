@@ -16,6 +16,11 @@ export default function SettingsView({ state }: { state: ViewState }) {
   const update = (patch: Partial<Settings>) => api.setSettings({ ...settings, ...patch });
   const desktop = inApp && !state.mobile;
   const [autostart, setAutostart] = useState(false);
+  const [adChoices, setAdChoices] = useState(false);
+
+  useEffect(() => {
+    if (state.ads) api.adsPrivacyOptionsRequired().then(setAdChoices);
+  }, [state.ads]);
 
   useEffect(() => {
     if (desktop) isEnabled().then(setAutostart).catch(() => {});
@@ -119,6 +124,11 @@ export default function SettingsView({ state }: { state: ViewState }) {
         {state.edition === "full" && (
           <button className="link" onClick={() => api.open(SPONSOR)}>
             ♥ {i18n.t("support")} ↗
+          </button>
+        )}
+        {adChoices && (
+          <button className="link" onClick={() => api.adsShowPrivacyOptions()}>
+            {i18n.t("adChoices")}
           </button>
         )}
         <button className="link" onClick={() => api.open(PRIVACY)}>

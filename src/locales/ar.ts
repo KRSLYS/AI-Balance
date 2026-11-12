@@ -80,6 +80,7 @@ export const ar: Locale = {
     organization: "مؤسسة GitHub",
     website: "الموقع",
     support: "ادعم المشروع",
+    adChoices: "خيارات خصوصية الإعلانات",
   },
   labels: {
     Session: "الجلسة",

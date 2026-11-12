@@ -80,6 +80,7 @@ export const it: Locale = {
     organization: "Organizzazione GitHub",
     website: "Sito web",
     support: "Sostieni il progetto",
+    adChoices: "Scelte sulla privacy degli annunci",
   },
   labels: {
     Session: "Sessione",

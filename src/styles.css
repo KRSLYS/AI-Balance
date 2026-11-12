@@ -181,6 +181,8 @@ code {
   flex-direction: column;
   height: 100%;
   padding-top: env(safe-area-inset-top);
+  /* Room for the store edition's banner ad, which sits below the app. Zero everywhere else. */
+  padding-bottom: var(--ad-height, 0px);
 }
 
 .topbar {

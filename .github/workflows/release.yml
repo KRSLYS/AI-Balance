@@ -200,26 +200,41 @@ jobs:
           npx tauri icon assets/icon.png
           node scripts/add-android-widget.mjs
 
-      # The APK is the full edition, for direct download.
+      # The APK is the full edition, for direct download. It is built first, so it has no ad code in it.
       - name: Build the APK
-        run: npx tauri android build --apk --target aarch64 armv7
+        run: |
+          npx tauri android build --apk --target aarch64 armv7
+          cp "$(find src-tauri/gen/android/app/build/outputs/apk -name '*.apk' | head -n 1)" "$RUNNER_TEMP/full.apk"
 
-      # Google Play gets the store edition: only providers with a published API, and no self-update.
-      # It needs your upload key, so it is built only when the keystore secret is set.
+      # The store edition with Google's test ads: for trying the banner and the consent form on a
+      # phone. It is attached to the run, never to a release.
+      - name: Build the store edition with test ads
+        env:
+          AIBALANCE_EDITION: store
+        run: |
+          node scripts/add-android-ads.mjs test
+          export AIBALANCE_AD_UNIT="$(node -p "require('./src-tauri/ads.json').test.bannerUnitId")"
+          npx tauri android build --apk --target aarch64 armv7
+          cp "$(find src-tauri/gen/android/app/build/outputs/apk -name '*.apk' | head -n 1)" "$RUNNER_TEMP/store-test.apk"
+
+      # Google Play gets the store edition with the real ad unit: only providers with a published
+      # API, and no self-update. It needs your upload key, so it is built only when the keystore
+      # secret is set.
       - name: Build the app bundle for Google Play
         if: env.HAS_KEYSTORE == 'true'
         env:
           AIBALANCE_EDITION: store
-        run: npx tauri android build --aab --target aarch64 armv7
+        run: |
+          node scripts/add-android-ads.mjs live
+          export AIBALANCE_AD_UNIT="$(node -p "require('./src-tauri/ads.json').android.bannerUnitId")"
+          npx tauri android build --aab --target aarch64 armv7
 
-      - name: Sign the APK
+      - name: Sign
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
-          unsigned="$(find src-tauri/gen/android/app/build/outputs/apk -name '*.apk' | head -n 1)"
-          test -n "$unsigned"
           if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
             printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.jks"
             alias="${ANDROID_KEY_ALIAS:-aibalance}"
@@ -233,19 +248,22 @@ jobs:
               -dname "CN=AI Balance test build"
           fi
           tools="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -n 1)"
-          mkdir -p out
-          "$tools/zipalign" -f 4 "$unsigned" "$RUNNER_TEMP/aligned.apk"
-          "$tools/apksigner" sign --ks "$RUNNER_TEMP/release.jks" --ks-key-alias "$alias" \
-            --ks-pass "pass:$password" --key-pass "pass:$password" \
-            --out "out/AIBalance_${VERSION}_android.apk" "$RUNNER_TEMP/aligned.apk"
-          "$tools/apksigner" verify "out/AIBalance_${VERSION}_android.apk"
+          sign() {
+            "$tools/zipalign" -f 4 "$1" "$RUNNER_TEMP/aligned.apk"
+            "$tools/apksigner" sign --ks "$RUNNER_TEMP/release.jks" --ks-key-alias "$alias" \
+              --ks-pass "pass:$password" --key-pass "pass:$password" --out "$2" "$RUNNER_TEMP/aligned.apk"
+            "$tools/apksigner" verify "$2"
+          }
+          mkdir -p out store-test
+          sign "$RUNNER_TEMP/full.apk" "out/AIBalance_${VERSION}_android.apk"
+          sign "$RUNNER_TEMP/store-test.apk" "store-test/AIBalance_${VERSION}_android_store_test_ads.apk"
           bundle="$(find src-tauri/gen/android/app/build/outputs/bundle -name '*.aab' | head -n 1)"
           if [ -n "$ANDROID_KEYSTORE_BASE64" ] && [ -n "$bundle" ]; then
             cp "$bundle" "out/AIBalance_${VERSION}_android_store.aab"
             jarsigner -keystore "$RUNNER_TEMP/release.jks" -storepass "$password" -keypass "$password" \
               -sigalg SHA256withRSA -digestalg SHA-256 "out/AIBalance_${VERSION}_android_store.aab" "$alias"
           fi
-          rm -f "$RUNNER_TEMP/release.jks" out/*.idsig
+          rm -f "$RUNNER_TEMP/release.jks" out/*.idsig store-test/*.idsig
 
       - uses: actions/upload-artifact@v4
         with:
@@ -253,6 +271,13 @@ jobs:
           path: |
             out/*.apk
             out/*.aab
+          if-no-files-found: error
+
+      # Not named aibalance-*, so the release does not pick it up.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: store-edition-test-ads-Android
+          path: store-test/*.apk
           if-no-files-found: error
 
   ios:

@@ -32,6 +32,13 @@ export default function App() {
     };
   }, []);
 
+  // The store edition's banner: started once the welcome screen is done, and given room at the bottom.
+  const showAds = state?.ads === true && state.settings.onboarded;
+  useEffect(() => {
+    if (!showAds) return;
+    api.adsStart().then((height) => document.documentElement.style.setProperty("--ad-height", `${height}px`));
+  }, [showAds]);
+
   const language = state?.settings.language ?? "system";
   const theme = state?.settings.theme ?? "system";
   const i18n = useMemo(() => makeI18n(resolveLang(language)), [language]);

@@ -50,6 +50,8 @@ export interface ViewState {
   update: { version: string; url: string } | null;
   /** "store" builds offer only providers with a published API, and are updated by their store. */
   edition: "full" | "store";
+  /** This build shows an ad. */
+  ads: boolean;
   /** The providers this build offers, in the order to list them. */
   providers: ProviderId[];
 }
@@ -116,6 +118,10 @@ export const api = {
     demoChanged();
     return settings;
   },
+  /** Starts the ad after consent; resolves with the height to leave free at the bottom, in CSS pixels. */
+  adsStart: (): Promise<number> => (inApp ? invoke("ads_start") : Promise.resolve(0)),
+  adsPrivacyOptionsRequired: (): Promise<boolean> => (inApp ? invoke("ads_privacy_options_required") : Promise.resolve(false)),
+  adsShowPrivacyOptions: (): Promise<void> => (inApp ? invoke("ads_show_privacy_options") : Promise.resolve()),
   showMain: (): Promise<void> => (inApp ? invoke("show_main") : Promise.resolve()),
   onState: (handler: (state: ViewState) => void): (() => void) => {
     if (!inApp) {

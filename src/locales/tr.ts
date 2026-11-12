@@ -80,6 +80,7 @@ export const tr: Locale = {
     organization: "GitHub kuruluşu",
     website: "Web sitesi",
     support: "Projeyi destekle",
+    adChoices: "Reklam gizlilik seçenekleri",
   },
   labels: {
     Session: "Oturum",

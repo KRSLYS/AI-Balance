@@ -106,20 +106,24 @@ accountant or lawyer before the first payout.
 - The **European Accessibility Act** and the **AI Act** are unlikely to apply: the app is not one of
   the listed services, and it contains no AI system.
 
-## Ads are not in the code yet
+## Ads
 
-Showing ads needs things only you can provide, and a native SDK that has to be tested on real
-phones:
+The store edition shows one banner at the bottom of the screen, below the app. The full edition and
+the desktop apps contain no ad code at all.
 
-1. An AdMob account, an AdMob app ID for Android and one for iOS, and a banner ad unit ID for each.
-2. The Google Mobile Ads SDK added to the generated Android and iOS projects, with Google's consent
-   form (required in the EEA, the UK and Switzerland) and, on iOS, the tracking permission prompt
-   and privacy manifest.
-3. An `app-ads.txt` file at `https://aibalance.krslys.be/app-ads.txt`, with
-   `https://aibalance.krslys.be/` listed as the developer website in both stores.
-
-The plan that keeps ads out of the way: one small banner at the bottom of the Usage tab, on Android
-and iOS only, never over content, never full-screen, and none on desktop.
+- **Android:** in the code. The AdMob identifiers are in `src-tauri/ads.json`; they are public
+  values, not secrets. Google's consent form runs before any ad is requested, and Settings offers
+  **Ad privacy choices** wherever consent was asked.
+- **Trying it:** every release run attaches a store-edition APK that shows Google's test ads
+  (`store-edition-test-ads-Android`). Never tap live ads in your own app: AdMob suspends accounts
+  for it.
+- **iOS:** not built yet. It needs the Apple Developer account, an AdMob app for iOS, the tracking
+  permission prompt and the privacy manifest.
+- **`app-ads.txt`** is published at `https://aibalance.krslys.be/app-ads.txt`. List
+  `https://aibalance.krslys.be/` as the developer website in both stores so AdMob can match it.
+- **Still yours to do in AdMob:** finish the payment profile, publish a GDPR message under Privacy &
+  messaging (without it no consent form appears, and no ads are shown in Europe), and link the app
+  to Google Play once it is published.
 
 ## What a reviewer may object to
 

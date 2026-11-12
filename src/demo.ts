@@ -10,6 +10,7 @@ export function demoState(): ViewState {
     version: "demo",
     update: null,
     edition: "full",
+    ads: false,
     providers: ["claude", "codex", "cursor", "copilot", "kimi", "grok", "amp", "opencode", "muse", "devin", "copilotorg", "claudeapi", "openrouter", "zai", "ollama"],
     settings: { refreshMinutes: 5, notifications: true, notifyThreshold: 90, language: "system", theme: "system", onboarded: !new URLSearchParams(location.search).has("welcome"), checkUpdates: true },
     accounts: [
