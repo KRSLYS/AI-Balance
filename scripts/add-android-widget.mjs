@@ -1,4 +1,5 @@
-// Adds the home-screen widget to the Android project that `tauri android init` generates.
+// Prepares the Android project that `tauri android init` generates: adds the home-screen widget
+// and turns cloud backup off.
 // Run it after every init: the generated project is not committed.
 import { cpSync, existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -51,6 +52,17 @@ if (!activity.includes("UsageWidget.refresh")) {
 }
 `;
   writeFileSync(activityPath, activity);
+}
+
+// Keep the app's data, the saved sign-ins included, out of Google's cloud backup.
+{
+  let manifest = readFileSync(join(main, "AndroidManifest.xml"), "utf8");
+  if (/android:allowBackup="[^"]*"/.test(manifest)) {
+    manifest = manifest.replace(/android:allowBackup="[^"]*"/, 'android:allowBackup="false"');
+  } else {
+    manifest = manifest.replace("<application", '<application android:allowBackup="false"');
+  }
+  writeFileSync(join(main, "AndroidManifest.xml"), manifest);
 }
 
 // Declare the widget.
