@@ -5,10 +5,12 @@ import { PROVIDERS, providerInfo } from "./providers";
 
 interface Props {
   initial: ProviderId | null;
+  /** The providers this build offers. */
+  offered: ProviderId[];
   onClose: () => void;
 }
 
-export default function AddAccount({ initial, onClose }: Props) {
+export default function AddAccount({ initial, offered, onClose }: Props) {
   const i18n = useI18n();
   const [provider, setProvider] = useState<ProviderId | null>(initial);
   const info = provider ? providerInfo(provider) : null;
@@ -30,7 +32,7 @@ export default function AddAccount({ initial, onClose }: Props) {
         </header>
         {!info && (
           <div className="grid">
-            {PROVIDERS.map((item) => (
+            {PROVIDERS.filter((item) => offered.includes(item.id)).map((item) => (
               <button key={item.id} className="tile" onClick={() => setProvider(item.id)}>
                 <span className="avatar small" style={{ background: item.color }} aria-hidden>
                   {item.name[0]}

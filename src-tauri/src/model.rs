@@ -52,8 +52,70 @@ impl ProviderKind {
         }
     }
 
+    /// Read through an API the provider publishes for this purpose, with a key the user creates for it.
+    /// The others sign in the way the provider's own tools do and read what those tools read.
+    pub fn is_official(self) -> bool {
+        matches!(self, Self::OpenRouter | Self::CopilotOrg)
+    }
+
     pub fn uses_api_key(self) -> bool {
         matches!(self, Self::OpenRouter | Self::Zai | Self::Ollama | Self::CopilotOrg)
+    }
+}
+
+impl ProviderKind {
+    pub const ALL: [Self; 14] = [
+        Self::Claude,
+        Self::Codex,
+        Self::Cursor,
+        Self::Copilot,
+        Self::Kimi,
+        Self::Grok,
+        Self::Amp,
+        Self::OpenCode,
+        Self::Muse,
+        Self::Devin,
+        Self::CopilotOrg,
+        Self::OpenRouter,
+        Self::Zai,
+        Self::Ollama,
+    ];
+}
+
+/// Which providers a build offers. It is fixed when the app is built, by `AIBALANCE_EDITION`.
+#[derive(Serialize, Clone, Copy, PartialEq, Eq, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum Edition {
+    /// Every provider. For downloads from the project's own website and releases.
+    Full,
+    /// Only providers with a published API, and no self-update. For the app stores, whose rules
+    /// require a third party's permission to use its service and updates through the store alone.
+    Store,
+}
+
+impl Edition {
+    pub fn current() -> Self {
+        Self::named(option_env!("AIBALANCE_EDITION"))
+    }
+
+    fn named(name: Option<&str>) -> Self {
+        match name {
+            Some("store") => Self::Store,
+            _ => Self::Full,
+        }
+    }
+
+    pub fn offers(self, provider: ProviderKind) -> bool {
+        self == Self::Full || provider.is_official()
+    }
+
+    pub fn providers(self) -> Vec<ProviderKind> {
+        ProviderKind::ALL.into_iter().filter(|provider| self.offers(*provider)).collect()
+    }
+
+    /// A store build is updated by its store, never by a download.
+    pub fn checks_for_updates(self) -> bool {
+        self == Self::Full
     }
 }
 
@@ -255,3 +317,32 @@ impl From<reqwest::Error> for ProviderError {
 }
 
 pub type Result<T> = std::result::Result<T, ProviderError>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_store_edition_offers_only_published_apis() {
+        assert_eq!(Edition::Store.providers(), [ProviderKind::CopilotOrg, ProviderKind::OpenRouter]);
+        assert_eq!(Edition::Full.providers().len(), ProviderKind::ALL.len());
+        assert!(!Edition::Store.offers(ProviderKind::Claude));
+        assert!(!Edition::Store.checks_for_updates());
+        assert!(Edition::Full.checks_for_updates());
+    }
+
+    #[test]
+    fn a_build_is_the_full_edition_unless_it_says_store() {
+        assert_eq!(Edition::named(None), Edition::Full);
+        assert_eq!(Edition::named(Some("")), Edition::Full);
+        assert_eq!(Edition::named(Some("store")), Edition::Store);
+    }
+
+    #[test]
+    fn every_provider_is_listed_once() {
+        let mut names: Vec<_> = ProviderKind::ALL.iter().map(|provider| provider.display_name()).collect();
+        names.sort_unstable();
+        names.dedup();
+        assert_eq!(names.len(), ProviderKind::ALL.len());
+    }
+}

@@ -78,6 +78,7 @@ export const ar: Locale = {
     allUsage: "كل الاستخدام",
     openApp: "فتح AI Balance",
     organization: "مؤسسة GitHub",
+    website: "الموقع",
   },
   labels: {
     Session: "الجلسة",

@@ -112,7 +112,7 @@ export default function App() {
             </button>
           ))}
         </nav>
-        {adding && <AddAccount initial={adding.provider} onClose={() => setAdding(null)} />}
+        {adding && <AddAccount initial={adding.provider} offered={state.providers} onClose={() => setAdding(null)} />}
       </div>
     </I18nContext.Provider>
   );

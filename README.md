@@ -99,6 +99,20 @@ leave **publish** unticked. The installers are attached to the run.
 Every push also runs [ci.yml](.github/workflows/ci.yml): formatting, Clippy, the tests and a build
 of the web UI.
 
+### Two editions
+
+The same code builds two editions, chosen at build time by the `AIBALANCE_EDITION` variable.
+
+| | Full (the default) | Store (`AIBALANCE_EDITION=store`) |
+|---|---|---|
+| Providers | All of them | Only those with a published API: OpenRouter and Copilot Organization |
+| Updates | Tells you when a newer release is out | Left to the app store |
+| Where | Direct downloads: desktop installers and the Android `.apk` | Google Play (`.aab`) and the App Store (`.ipa`) |
+
+The app stores require a third party's permission to use its service, and most providers publish no
+API for plan limits. The store edition therefore offers only providers whose API is public; see
+[docs/STORES.md](docs/STORES.md). The release workflow builds both.
+
 ### Secrets (optional)
 
 Without any secrets the workflow still produces installers for every platform. Add these under

@@ -77,6 +77,7 @@ export const en = {
     allUsage: "All Usage",
     openApp: "Open AI Balance",
     organization: "GitHub organization",
+    website: "Website",
   },
   labels: {
     Session: "Session",

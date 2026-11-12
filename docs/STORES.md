@@ -4,6 +4,11 @@ What is ready in the code, what you still have to do yourself, and what a review
 
 ## Ready in the code
 
+- **A store edition.** Builds made with `AIBALANCE_EDITION=store` offer only providers with a
+  published API (OpenRouter and Copilot Organization), refuse the others even if asked, and never
+  look for updates themselves. The release workflow builds the Google Play bundle and the App Store
+  build this way. The full edition stays on direct download.
+
 - **Privacy policy:** [PRIVACY.md](../PRIVACY.md), linked from Settings. Both stores require a public
   link to it; use its GitHub address.
 - **No data reaches the developer:** no analytics, no crash reporting, no server.
@@ -128,9 +133,13 @@ Read this before paying for the developer accounts.
 - **The providers' own terms.** Some of these providers restrict using their subscription sign-in
   outside their own apps. A provider could block the app's requests at any time, and in the worst
   case act against an account that uses it.
-- **Lower-risk option.** OpenRouter documents its key and credits API, and Z.ai and Ollama use API
-  keys the user creates for this purpose. A store version limited to API-key providers is much
-  easier to defend in review; the full set can stay in the desktop and direct-download versions.
+- **What the store edition does about it.** It leaves those providers out. The price is a thin app:
+  two providers today. Adding the usage APIs that providers publish for API and team accounts is
+  what makes it worth listing.
+- **Do not advertise the full edition inside the store app.** Google Play forbids an app from
+  installing or updating itself from outside Play, and both stores reject apps that steer users
+  around review. A plain link to the website is fine; a "get more providers here" button, or a link
+  straight to an APK, is not. The website can describe both editions.
 - **Provider names.** The app shows provider names as plain text and uses no logos. Keep store
   screenshots and the description free of logos, and do not imply the providers endorse the app.
 - **Ads beside account data.** Keep the banner clearly separate from the usage cards so an ad can

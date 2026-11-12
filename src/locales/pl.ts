@@ -78,6 +78,7 @@ export const pl: Locale = {
     allUsage: "Całe użycie",
     openApp: "Otwórz AI Balance",
     organization: "Organizacja GitHub",
+    website: "Strona internetowa",
   },
   labels: {
     Session: "Sesja",

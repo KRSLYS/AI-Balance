@@ -18,9 +18,10 @@ use tokio::sync::mpsc;
 use tokio::task::JoinSet;
 
 use login::LoginPrompt;
-use model::{now_ms, Account, Credential, MetricLine, ProviderError, ProviderKind, Settings, Snapshot};
+use model::{now_ms, Account, Credential, Edition, MetricLine, ProviderError, ProviderKind, Settings, Snapshot};
 use store::Store;
 
+const NOT_OFFERED: &str = "This version of AI Balance does not offer that provider.";
 const STATE_EVENT: &str = "state-changed";
 const LOGIN_EVENT: &str = "login-finished";
 /// How long a failed account waits before the loop reads it again, by consecutive failures.
@@ -61,6 +62,9 @@ struct ViewState {
     mobile: bool,
     version: &'static str,
     update: Option<update::Update>,
+    edition: Edition,
+    /// The providers this build offers, in the order to list them.
+    providers: Vec<ProviderKind>,
 }
 
 fn view(state: &AppState) -> ViewState {
@@ -71,6 +75,8 @@ fn view(state: &AppState) -> ViewState {
         mobile: cfg!(mobile),
         version: env!("CARGO_PKG_VERSION"),
         update: state.update.lock().unwrap().clone(),
+        edition: Edition::current(),
+        providers: Edition::current().providers(),
     }
 }
 
@@ -136,6 +142,7 @@ async fn refresh_all(app: &AppHandle, force: bool) {
         .store
         .accounts()
         .into_iter()
+        .filter(|account| Edition::current().offers(account.provider))
         .filter(|account| {
             if force {
                 return true;
@@ -225,7 +232,7 @@ async fn check_for_update(app: &AppHandle) {
     let settings = state.store.settings();
     {
         let mut checked_at = state.update_checked_at.lock().unwrap();
-        if !settings.check_updates || now_ms() - *checked_at < EVERY_MS {
+        if !Edition::current().checks_for_updates() || !settings.check_updates || now_ms() - *checked_at < EVERY_MS {
             return;
         }
         *checked_at = now_ms();
@@ -277,6 +284,9 @@ async fn add_api_key_account(
     organization: Option<String>,
 ) -> Result<Account, String> {
     let key = key.trim().to_string();
+    if !Edition::current().offers(provider) {
+        return Err(NOT_OFFERED.into());
+    }
     if key.is_empty() || !provider.uses_api_key() {
         return Err("Enter an API key.".into());
     }
@@ -331,6 +341,9 @@ struct LoginFinished {
 
 #[tauri::command]
 async fn begin_login(app: AppHandle, provider: ProviderKind) -> Result<LoginPrompt, String> {
+    if !Edition::current().offers(provider) {
+        return Err(NOT_OFFERED.into());
+    }
     let state = app.state::<AppState>();
     let (prompt, pending) = login::start(&state.http, provider, cfg!(mobile)).await?;
     let (pasted, pasted_codes) = mpsc::channel(4);

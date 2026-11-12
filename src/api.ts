@@ -48,6 +48,10 @@ export interface ViewState {
   version: string;
   /** A newer release, when there is one. */
   update: { version: string; url: string } | null;
+  /** "store" builds offer only providers with a published API, and are updated by their store. */
+  edition: "full" | "store";
+  /** The providers this build offers, in the order to list them. */
+  providers: ProviderId[];
 }
 
 export interface LoginPrompt {

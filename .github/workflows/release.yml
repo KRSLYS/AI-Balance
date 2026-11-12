@@ -163,6 +163,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VERSION: ${{ needs.prepare.outputs.version }}
+      HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -199,8 +200,17 @@ jobs:
           npx tauri icon assets/icon.png
           node scripts/add-android-widget.mjs
 
+      # The APK is the full edition, for direct download.
       - name: Build the APK
-        run: npx tauri android build --apk --aab --target aarch64 armv7
+        run: npx tauri android build --apk --target aarch64 armv7
+
+      # Google Play gets the store edition: only providers with a published API, and no self-update.
+      # It needs your upload key, so it is built only when the keystore secret is set.
+      - name: Build the app bundle for Google Play
+        if: env.HAS_KEYSTORE == 'true'
+        env:
+          AIBALANCE_EDITION: store
+        run: npx tauri android build --aab --target aarch64 armv7
 
       - name: Sign the APK
         env:
@@ -229,12 +239,11 @@ jobs:
             --ks-pass "pass:$password" --key-pass "pass:$password" \
             --out "out/AIBalance_${VERSION}_android.apk" "$RUNNER_TEMP/aligned.apk"
           "$tools/apksigner" verify "out/AIBalance_${VERSION}_android.apk"
-          # Google Play takes an app bundle signed with your upload key, so it is only made with a real keystore.
           bundle="$(find src-tauri/gen/android/app/build/outputs/bundle -name '*.aab' | head -n 1)"
           if [ -n "$ANDROID_KEYSTORE_BASE64" ] && [ -n "$bundle" ]; then
-            cp "$bundle" "out/AIBalance_${VERSION}_android.aab"
+            cp "$bundle" "out/AIBalance_${VERSION}_android_store.aab"
             jarsigner -keystore "$RUNNER_TEMP/release.jks" -storepass "$password" -keypass "$password" \
-              -sigalg SHA256withRSA -digestalg SHA-256 "out/AIBalance_${VERSION}_android.aab" "$alias"
+              -sigalg SHA256withRSA -digestalg SHA-256 "out/AIBalance_${VERSION}_android_store.aab" "$alias"
           fi
           rm -f "$RUNNER_TEMP/release.jks" out/*.idsig
 
@@ -295,9 +304,10 @@ jobs:
           mkdir -p "$RUNNER_TEMP/keys"
           printf '%s' "$APPLE_API_KEY_BASE64" | base64 --decode > "$RUNNER_TEMP/keys/AuthKey_${APPLE_API_KEY}.p8"
           export APPLE_API_KEY_PATH="$RUNNER_TEMP/keys/AuthKey_${APPLE_API_KEY}.p8"
-          npx tauri ios build --export-method app-store-connect
+          # The App Store gets the store edition.
+          AIBALANCE_EDITION=store npx tauri ios build --export-method app-store-connect
           mkdir -p out
-          find src-tauri/gen/apple/build -name '*.ipa' -exec cp {} "out/AIBalance_${VERSION}_ios.ipa" \;
+          find src-tauri/gen/apple/build -name '*.ipa' -exec cp {} "out/AIBalance_${VERSION}_ios_store.ipa" \;
           rm -rf "$RUNNER_TEMP/keys"
 
       - name: Explain the missing iOS build

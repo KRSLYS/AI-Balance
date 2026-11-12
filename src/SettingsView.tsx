@@ -6,6 +6,7 @@ import { useI18n } from "./i18n";
 import { LANGUAGES } from "./locales";
 
 const REPOSITORY = "https://github.com/KRSLYS/AI-Balance";
+const WEBSITE = "https://aibalance.krslys.be/";
 const PRIVACY = "https://aibalance.krslys.be/privacy.html";
 
 export default function SettingsView({ state }: { state: ViewState }) {
@@ -64,10 +65,12 @@ export default function SettingsView({ state }: { state: ViewState }) {
             ))}
           </select>
         </label>
+        {state.edition === "full" && (
         <label>
           {i18n.t("checkUpdates")}
           <input type="checkbox" checked={settings.checkUpdates} onChange={(event) => update({ checkUpdates: event.target.checked })} />
         </label>
+        )}
         {desktop && (
           <label>
             {i18n.t("launchAtLogin")}
@@ -105,6 +108,9 @@ export default function SettingsView({ state }: { state: ViewState }) {
         <span className="muted" dir="ltr">
           KBO/BCE 1026.902.574 · info@krslys.be
         </span>
+        <button className="link" onClick={() => api.open(WEBSITE)}>
+          {i18n.t("website")} ↗
+        </button>
         <button className="link" onClick={() => api.open(REPOSITORY)}>
           {i18n.t("sourceCode")} ↗
         </button>

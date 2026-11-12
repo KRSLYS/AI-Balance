@@ -9,6 +9,8 @@ export function demoState(): ViewState {
     mobile: false,
     version: "demo",
     update: null,
+    edition: "full",
+    providers: ["claude", "codex", "cursor", "copilot", "kimi", "grok", "amp", "opencode", "muse", "devin", "copilotorg", "openrouter", "zai", "ollama"],
     settings: { refreshMinutes: 5, notifications: true, notifyThreshold: 90, language: "system", theme: "system", onboarded: !new URLSearchParams(location.search).has("welcome"), checkUpdates: true },
     accounts: [
       { id: "a", provider: "claude", label: "you@example.com", createdAt: now },
