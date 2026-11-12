@@ -257,7 +257,9 @@ jobs:
 
   ios:
     name: iOS
-    needs: prepare
+    # After the desktop builds, so the two macOS jobs never compete for a runner.
+    needs: [prepare, desktop]
+    if: always() && needs.prepare.result == 'success'
     runs-on: macos-latest
     # An iPhone build needs an Apple Developer account. Without its secrets this job checks that the
     # Xcode project generates and says why there is no app; it never blocks the other platforms.
@@ -324,7 +326,8 @@ jobs:
   publish:
     name: Publish the release
     needs: [prepare, desktop, android, ios]
-    if: needs.prepare.outputs.publish == 'true' && needs.desktop.result == 'success' && needs.android.result == 'success'
+    # A platform whose runner never arrived is left out of the release; a build that failed stops it.
+    if: always() && needs.prepare.outputs.publish == 'true' && needs.android.result == 'success' && needs.desktop.result != 'failure'
     runs-on: ubuntu-latest
     permissions:
       contents: write
