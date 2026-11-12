@@ -88,7 +88,8 @@ jobs:
             bundle: src-tauri/target/release/bundle
           - name: macOS
             os: macos-latest
-            args: --target universal-apple-darwin --bundles dmg
+            # "app" is what the in-app updater downloads; "dmg" is what people install from.
+            args: --target universal-apple-darwin --bundles app,dmg
             bundle: src-tauri/target/universal-apple-darwin/release/bundle
     runs-on: ${{ matrix.os }}
     steps:
