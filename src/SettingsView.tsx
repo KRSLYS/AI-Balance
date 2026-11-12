@@ -7,6 +7,7 @@ import { LANGUAGES } from "./locales";
 
 const REPOSITORY = "https://github.com/KRSLYS/AI-Balance";
 const WEBSITE = "https://aibalance.krslys.be/";
+const SPONSOR = "https://github.com/sponsors/KRSLYS";
 const PRIVACY = "https://aibalance.krslys.be/privacy.html";
 
 export default function SettingsView({ state }: { state: ViewState }) {
@@ -114,6 +115,12 @@ export default function SettingsView({ state }: { state: ViewState }) {
         <button className="link" onClick={() => api.open(REPOSITORY)}>
           {i18n.t("sourceCode")} ↗
         </button>
+        {/* The app stores do not allow a link to donations outside their own payment systems. */}
+        {state.edition === "full" && (
+          <button className="link" onClick={() => api.open(SPONSOR)}>
+            ♥ {i18n.t("support")} ↗
+          </button>
+        )}
         <button className="link" onClick={() => api.open(PRIVACY)}>
           {i18n.t("privacyPolicy")} ↗
         </button>

@@ -79,6 +79,7 @@ export const ru: Locale = {
     openApp: "Открыть AI Balance",
     organization: "Организация GitHub",
     website: "Сайт",
+    support: "Поддержать проект",
   },
   labels: {
     Session: "Сессия",

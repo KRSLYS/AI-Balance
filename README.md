@@ -204,6 +204,11 @@ line in `providers/mod.rs`, and an entry in `src/providers.ts`.
 - الواجهة تدعم 12 لغة (منها العربية والإنجليزية والصينية ولغات أوروبية) والوضعين الفاتح والداكن.
 - لإصدار نسخة جديدة يكفي رفع وسم (tag) مثل `v0.1.0`، وسيبني GitHub Actions كل المنصات وينشر الإصدار.
 
+## Support the project
+
+AI Balance is free and open source. If it is useful to you, you can
+[sponsor its development](https://github.com/sponsors/KRSLYS).
+
 ## Acknowledgements
 
 The idea comes from [OpenUsage](https://github.com/robinebers/openusage) by Robin Ebers, a macOS

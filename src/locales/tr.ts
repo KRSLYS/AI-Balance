@@ -79,6 +79,7 @@ export const tr: Locale = {
     openApp: "AI Balance’ı aç",
     organization: "GitHub kuruluşu",
     website: "Web sitesi",
+    support: "Projeyi destekle",
   },
   labels: {
     Session: "Oturum",

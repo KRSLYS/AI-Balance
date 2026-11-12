@@ -79,6 +79,7 @@ export const zh: Locale = {
     openApp: "打开 AI Balance",
     organization: "GitHub 组织",
     website: "网站",
+    support: "支持本项目",
   },
   labels: {
     Session: "会话",
