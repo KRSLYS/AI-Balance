@@ -12,8 +12,10 @@ Only the latest release receives security fixes.
 
 ## How the app protects your accounts
 
-- **Credentials stay on the device.** On desktop they are kept in the operating system's keychain;
-  on phones, in storage only the app can read. The app has no server to send them to.
+- **Credentials stay on the device.** On desktop they are kept in the operating system's keychain.
+  On Android they are encrypted with a key that is generated inside the Android Keystore and cannot
+  leave it, and they are kept out of cloud backups. On iOS they are in storage only the app can
+  read. The app has no server to send them to.
 - **Each credential goes only to its own provider,** and only over HTTPS: the app refuses plain HTTP,
   even when an address or a redirect asks for it.
 - **The least access a sign-in can ask for.** Where a provider offers scopes, the app requests only

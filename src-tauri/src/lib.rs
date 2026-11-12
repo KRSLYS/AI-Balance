@@ -383,13 +383,16 @@ fn cancel_login(state: State<'_, AppState>, session_id: String) {
     }
 }
 
+/// Async, so the credential vault is never touched from the main thread.
 #[tauri::command]
-fn remove_account(app: AppHandle, state: State<'_, AppState>, id: String) {
+async fn remove_account(app: AppHandle, id: String) -> Result<(), String> {
+    let state = app.state::<AppState>();
     state.store.remove_account(&id);
     state.snapshots.lock().unwrap().remove(&id);
     state.failures.lock().unwrap().remove(&id);
     state.store.save_snapshots(&state.snapshots.lock().unwrap().clone());
     emit_state(&app);
+    Ok(())
 }
 
 #[tauri::command]
@@ -562,6 +565,19 @@ pub fn run() {
         builder = builder
             .plugin(tauri_plugin_single_instance::init(|app, _, _| show_window(app)))
             .plugin(tauri_plugin_autostart::init(tauri_plugin_autostart::MacosLauncher::LaunchAgent, Some(vec!["--hidden"])));
+    }
+    #[cfg(target_os = "android")]
+    {
+        // The Kotlin side of the credential vault (VaultPlugin.kt). It must be registered before the
+        // store opens, so the store finds the device's key store.
+        builder = builder.plugin(
+            tauri::plugin::Builder::<tauri::Wry>::new("vault")
+                .setup(|_app, api| {
+                    store::device::register(api.register_android_plugin("com.krslys.aibalance", "VaultPlugin")?);
+                    Ok(())
+                })
+                .build(),
+        );
     }
     builder
         .plugin(tauri_plugin_opener::init())

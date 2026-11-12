@@ -1,5 +1,5 @@
 // Prepares the Android project that `tauri android init` generates: adds the home-screen widget
-// and turns cloud backup off.
+// and the credential vault, and turns cloud backup off.
 // Run it after every init: the generated project is not committed.
 import { cpSync, existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -37,6 +37,10 @@ if (!packageName) {
 // The widget class, in the app's own package.
 const widget = readFileSync(join(source, "UsageWidget.kt"), "utf8").replace("__PACKAGE__", packageName);
 writeFileSync(join(dirname(activityPath), "UsageWidget.kt"), widget);
+
+// The plugin that encrypts the saved sign-ins with a key from the Android Keystore.
+const vault = readFileSync(join(source, "VaultPlugin.kt"), "utf8").replace("__PACKAGE__", packageName);
+writeFileSync(join(dirname(activityPath), "VaultPlugin.kt"), vault);
 
 // Its layout, drawables, colors and strings.
 cpSync(join(source, "res"), join(main, "res"), { recursive: true });
