@@ -43,7 +43,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
       publish: ${{ steps.version.outputs.publish }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - id: version
         env:
@@ -89,7 +89,7 @@ jobs:
             bundle: src-tauri/target/universal-apple-darwin/release/bundle
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Linux dependencies
         if: runner.os == 'Linux'
@@ -111,7 +111,7 @@ jobs:
           done
           exit 1
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -151,7 +151,7 @@ jobs:
           ls -l out
           test -n "$(ls -A out)"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: aibalance-${{ matrix.name }}
           path: out/*
@@ -165,14 +165,14 @@ jobs:
       VERSION: ${{ needs.prepare.outputs.version }}
       HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 17
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -265,7 +265,7 @@ jobs:
           fi
           rm -f "$RUNNER_TEMP/release.jks" out/*.idsig store-test/*.idsig
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: aibalance-Android
           path: |
@@ -274,7 +274,7 @@ jobs:
           if-no-files-found: error
 
       # Not named aibalance-*, so the release does not pick it up.
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: store-edition-test-ads-Android
           path: store-test/*.apk
@@ -296,9 +296,9 @@ jobs:
       APPLE_API_KEY_BASE64: ${{ secrets.APPLE_API_KEY_BASE64 }}
       APPLE_DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -341,7 +341,7 @@ jobs:
         if: env.APPLE_API_KEY_BASE64 == '' || env.APPLE_DEVELOPMENT_TEAM == ''
         run: echo "::notice::No iOS app was built. Apple only allows signed iOS builds here, so add the APPLE_* secrets described in the README."
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: env.APPLE_API_KEY_BASE64 != '' && env.APPLE_DEVELOPMENT_TEAM != ''
         with:
           name: aibalance-iOS
@@ -357,7 +357,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: artifacts
           pattern: aibalance-*
