@@ -72,7 +72,6 @@ export const ar: Locale = {
     exitSample: "خروج",
     privacyPolicy: "سياسة الخصوصية",
     updateAvailable: "الإصدار {v} متاح.",
-    download: "تنزيل",
     updateNow: "تحديث",
     updating: "جارٍ تنزيل التحديث… {p}%",
     checkUpdates: "التحقق من التحديثات",

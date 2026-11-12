@@ -72,7 +72,6 @@ export const fr: Locale = {
     exitSample: "Quitter",
     privacyPolicy: "Politique de confidentialité",
     updateAvailable: "La version {v} est disponible.",
-    download: "Télécharger",
     updateNow: "Mettre à jour",
     updating: "Téléchargement de la mise à jour… {p} %",
     checkUpdates: "Rechercher les mises à jour",

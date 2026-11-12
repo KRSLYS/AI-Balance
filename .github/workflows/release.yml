@@ -217,7 +217,7 @@ jobs:
         run: |
           npx tauri android init --ci
           npx tauri icon assets/icon.png
-          node scripts/add-android-widget.mjs
+          node scripts/prepare-android.mjs
 
       # The APK is the full edition, for direct download. It is built first, so it has no ad code in it.
       - name: Build the APK

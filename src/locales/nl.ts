@@ -72,7 +72,6 @@ export const nl: Locale = {
     exitSample: "Stoppen",
     privacyPolicy: "Privacybeleid",
     updateAvailable: "Versie {v} is beschikbaar.",
-    download: "Downloaden",
     updateNow: "Bijwerken",
     updating: "Update downloaden… {p}%",
     checkUpdates: "Controleren op updates",

@@ -4,7 +4,7 @@
 import { cpSync, existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-const source = "src-tauri/android-widget";
+const source = "src-tauri/android";
 const main = "src-tauri/gen/android/app/src/main";
 
 /** The generated MainActivity.kt, wherever the package puts it. */

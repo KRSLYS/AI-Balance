@@ -72,7 +72,6 @@ export const pt: Locale = {
     exitSample: "Sair",
     privacyPolicy: "Política de privacidade",
     updateAvailable: "A versão {v} está disponível.",
-    download: "Transferir",
     updateNow: "Atualizar",
     updating: "A transferir a atualização… {p}%",
     checkUpdates: "Procurar atualizações",
