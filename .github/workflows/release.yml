@@ -151,7 +151,7 @@ jobs:
           ls -l out
           test -n "$(ls -A out)"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: aibalance-${{ matrix.name }}
           path: out/*
@@ -238,7 +238,7 @@ jobs:
           fi
           rm -f "$RUNNER_TEMP/release.jks" out/*.idsig
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: aibalance-Android
           path: |
@@ -304,7 +304,7 @@ jobs:
         if: env.APPLE_API_KEY_BASE64 == '' || env.APPLE_DEVELOPMENT_TEAM == ''
         run: echo "::notice::No iOS app was built. Apple only allows signed iOS builds here, so add the APPLE_* secrets described in the README."
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: env.APPLE_API_KEY_BASE64 != '' && env.APPLE_DEVELOPMENT_TEAM != ''
         with:
           name: aibalance-iOS
