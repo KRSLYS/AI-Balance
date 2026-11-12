@@ -8,7 +8,8 @@ export function demoState(): ViewState {
   return {
     mobile: false,
     version: "demo",
-    settings: { refreshMinutes: 5, notifications: true, notifyThreshold: 90, language: "system", theme: "system", onboarded: !new URLSearchParams(location.search).has("welcome") },
+    update: null,
+    settings: { refreshMinutes: 5, notifications: true, notifyThreshold: 90, language: "system", theme: "system", onboarded: !new URLSearchParams(location.search).has("welcome"), checkUpdates: true },
     accounts: [
       { id: "a", provider: "claude", label: "you@example.com", createdAt: now },
       { id: "a2", provider: "claude", label: "team@example.com", createdAt: now },

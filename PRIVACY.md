@@ -29,6 +29,10 @@ To show your usage, the app talks directly to the providers whose accounts you a
 Ollama. Each request carries only that provider's own credential. Each provider handles the request
 under its own privacy policy.
 
+To tell you about a new version, the app reads the public list of releases from GitHub a few times a
+day. That request carries no information about you or your accounts, and you can turn it off in
+Settings.
+
 The app sends nothing to KRSLYS BV or to anyone else.
 
 ## Advertising

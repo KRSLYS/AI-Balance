@@ -71,6 +71,9 @@ export const zh: Locale = {
     sampleBanner: "当前显示的是示例数据。",
     exitSample: "退出",
     privacyPolicy: "隐私政策",
+    updateAvailable: "新版本 {v} 可用。",
+    download: "下载",
+    checkUpdates: "检查更新",
   },
   labels: {
     Session: "会话",

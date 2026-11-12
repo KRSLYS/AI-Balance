@@ -70,6 +70,9 @@ export const en = {
     sampleBanner: "You are viewing sample data.",
     exitSample: "Exit",
     privacyPolicy: "Privacy policy",
+    updateAvailable: "Version {v} is available.",
+    download: "Download",
+    checkUpdates: "Check for updates",
   },
   labels: {
     Session: "Session",

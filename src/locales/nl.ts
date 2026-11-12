@@ -71,6 +71,9 @@ export const nl: Locale = {
     sampleBanner: "Je bekijkt voorbeeldgegevens.",
     exitSample: "Stoppen",
     privacyPolicy: "Privacybeleid",
+    updateAvailable: "Versie {v} is beschikbaar.",
+    download: "Downloaden",
+    checkUpdates: "Controleren op updates",
   },
   labels: {
     Session: "Sessie",

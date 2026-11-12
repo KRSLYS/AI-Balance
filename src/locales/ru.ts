@@ -71,6 +71,9 @@ export const ru: Locale = {
     sampleBanner: "Вы просматриваете демонстрационные данные.",
     exitSample: "Выйти",
     privacyPolicy: "Политика конфиденциальности",
+    updateAvailable: "Доступна версия {v}.",
+    download: "Скачать",
+    checkUpdates: "Проверять обновления",
   },
   labels: {
     Session: "Сессия",

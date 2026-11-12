@@ -83,6 +83,14 @@ export default function App() {
           )}
         </header>
         {!inApp && !sample && <div className="banner">{i18n.t("demoBanner")}</div>}
+        {state.update && (
+          <div className="banner update">
+            <span>{i18n.t("updateAvailable", { v: state.update.version })}</span>
+            <button className="link" onClick={() => api.open(state.update!.url)}>
+              {i18n.t("download")} ↗
+            </button>
+          </div>
+        )}
         {sample && (
           <div className="banner">
             <span>{i18n.t("sampleBanner")}</span>

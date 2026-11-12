@@ -71,6 +71,9 @@ export const ar: Locale = {
     sampleBanner: "أنت تشاهد بيانات نموذجية.",
     exitSample: "خروج",
     privacyPolicy: "سياسة الخصوصية",
+    updateAvailable: "الإصدار {v} متاح.",
+    download: "تنزيل",
+    checkUpdates: "التحقق من التحديثات",
   },
   labels: {
     Session: "الجلسة",

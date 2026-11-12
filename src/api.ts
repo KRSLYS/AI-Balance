@@ -37,6 +37,7 @@ export interface Settings {
   language: string;
   theme: string;
   onboarded: boolean;
+  checkUpdates: boolean;
 }
 
 export interface ViewState {
@@ -45,6 +46,8 @@ export interface ViewState {
   settings: Settings;
   mobile: boolean;
   version: string;
+  /** A newer release, when there is one. */
+  update: { version: string; url: string } | null;
 }
 
 export interface LoginPrompt {

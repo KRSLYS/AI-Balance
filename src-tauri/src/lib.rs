@@ -6,6 +6,7 @@ mod login;
 mod model;
 mod providers;
 mod store;
+mod update;
 
 use std::collections::{HashMap, HashSet};
 use std::sync::Mutex;
@@ -46,6 +47,9 @@ struct AppState {
     logins: Mutex<HashMap<String, LoginSession>>,
     /// Held for a whole refresh pass so two passes never overlap.
     refreshing: tokio::sync::Mutex<()>,
+    /// A newer release, once a check has found one.
+    update: Mutex<Option<update::Update>>,
+    update_checked_at: Mutex<i64>,
 }
 
 #[derive(Serialize, Clone)]
@@ -56,6 +60,7 @@ struct ViewState {
     settings: Settings,
     mobile: bool,
     version: &'static str,
+    update: Option<update::Update>,
 }
 
 fn view(state: &AppState) -> ViewState {
@@ -65,6 +70,7 @@ fn view(state: &AppState) -> ViewState {
         settings: state.store.settings(),
         mobile: cfg!(mobile),
         version: env!("CARGO_PKG_VERSION"),
+        update: state.update.lock().unwrap().clone(),
     }
 }
 
@@ -209,6 +215,32 @@ fn notify_limits(app: &AppHandle, state: &AppState) {
         }
     }
     *notified = current;
+}
+
+/// Looks for a newer release a few times a day, and says so once when it finds one.
+async fn check_for_update(app: &AppHandle) {
+    use tauri_plugin_notification::NotificationExt;
+    const EVERY_MS: i64 = 6 * 60 * 60 * 1000;
+    let state = app.state::<AppState>();
+    let settings = state.store.settings();
+    {
+        let mut checked_at = state.update_checked_at.lock().unwrap();
+        if !settings.check_updates || now_ms() - *checked_at < EVERY_MS {
+            return;
+        }
+        *checked_at = now_ms();
+    }
+    let found = update::check(&state.http, env!("CARGO_PKG_VERSION")).await;
+    let is_news = found.is_some() && *state.update.lock().unwrap() != found;
+    if !is_news {
+        return;
+    }
+    if settings.notifications {
+        let version = found.as_ref().map(|update| update.version.clone()).unwrap_or_default();
+        let _ = app.notification().builder().title("AI Balance").body(format!("Version {version} is available.")).show();
+    }
+    *state.update.lock().unwrap() = found;
+    emit_state(app);
 }
 
 // ----- commands -----
@@ -442,6 +474,8 @@ pub fn run() {
                 notified: Mutex::default(),
                 logins: Mutex::default(),
                 refreshing: tokio::sync::Mutex::new(()),
+                update: Mutex::default(),
+                update_checked_at: Mutex::new(0),
             });
             #[cfg(desktop)]
             {
@@ -460,6 +494,7 @@ pub fn run() {
             tauri::async_runtime::spawn(async move {
                 loop {
                     refresh_all(&handle, false).await;
+                    check_for_update(&handle).await;
                     tokio::time::sleep(Duration::from_secs(30)).await;
                 }
             });

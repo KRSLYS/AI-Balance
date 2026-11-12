@@ -71,6 +71,9 @@ export const tr: Locale = {
     sampleBanner: "Örnek verileri görüntülüyorsunuz.",
     exitSample: "Çık",
     privacyPolicy: "Gizlilik politikası",
+    updateAvailable: "{v} sürümü yayımlandı.",
+    download: "İndir",
+    checkUpdates: "Güncellemeleri denetle",
   },
   labels: {
     Session: "Oturum",

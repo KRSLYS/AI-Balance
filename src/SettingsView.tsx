@@ -64,6 +64,10 @@ export default function SettingsView({ state }: { state: ViewState }) {
             ))}
           </select>
         </label>
+        <label>
+          {i18n.t("checkUpdates")}
+          <input type="checkbox" checked={settings.checkUpdates} onChange={(event) => update({ checkUpdates: event.target.checked })} />
+        </label>
         {desktop && (
           <label>
             {i18n.t("launchAtLogin")}

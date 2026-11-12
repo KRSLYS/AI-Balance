@@ -185,6 +185,8 @@ pub struct Settings {
     pub theme: String,
     /// The first-run welcome screen has been completed.
     pub onboarded: bool,
+    /// Look for a newer release now and then.
+    pub check_updates: bool,
 }
 
 impl Default for Settings {
@@ -197,6 +199,7 @@ impl Default for Settings {
             language: "system".into(),
             theme: "system".into(),
             onboarded: false,
+            check_updates: true,
         }
     }
 }

@@ -905,3 +905,8 @@ input[type="checkbox"] {
   display: block;
   margin: 12px auto 0;
 }
+
+.banner.update {
+  background: var(--accent-soft);
+  color: var(--text);
+}

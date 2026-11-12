@@ -71,6 +71,9 @@ export const it: Locale = {
     sampleBanner: "Stai visualizzando dati di esempio.",
     exitSample: "Esci",
     privacyPolicy: "Informativa sulla privacy",
+    updateAvailable: "È disponibile la versione {v}.",
+    download: "Scarica",
+    checkUpdates: "Cerca aggiornamenti",
   },
   labels: {
     Session: "Sessione",
