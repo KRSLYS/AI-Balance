@@ -5,6 +5,11 @@ updates:
     directory: /src-tauri
     schedule:
       interval: weekly
+    open-pull-requests-limit: 2
+    # Major versions change behavior and are taken on by hand.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       rust:
         patterns: ["*"]
@@ -12,10 +17,19 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 2
+    # Major versions change behavior and are taken on by hand.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       web:
         patterns: ["*"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly
+      interval: monthly
+    open-pull-requests-limit: 1
+    groups:
+      actions:
+        patterns: ["*"]
