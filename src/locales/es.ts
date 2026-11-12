@@ -77,6 +77,7 @@ export const es: Locale = {
     priority: "Prioridad",
     allUsage: "Todo el uso",
     openApp: "Abrir AI Balance",
+    organization: "Organización de GitHub",
   },
   labels: {
     Session: "Sesión",
@@ -99,5 +100,13 @@ export const es: Locale = {
     "Key Limit": "Límite de la clave",
     "Web Searches": "Búsquedas web",
     "Purchased Credits": "Créditos comprados",
+    Daily: "Diario",
+    "Agent Usage": "Uso del agente",
+    "Orb Hours": "Horas de Orb",
+    "Amp Free": "Amp gratuito",
+    "Individual Credits": "Créditos individuales",
+    "Org Credits": "Créditos de la organización",
+    "Org Spend": "Gasto de la organización",
+    "Extra Usage Cap": "Tope de uso adicional",
   },
 };

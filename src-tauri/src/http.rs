@@ -13,6 +13,8 @@ pub const USER_AGENT: &str = concat!("AIBalance/", env!("CARGO_PKG_VERSION"));
 pub fn client() -> reqwest::Client {
     reqwest::Client::builder()
         .user_agent(USER_AGENT)
+        // Credentials never travel over plain HTTP, whatever an address or a redirect says.
+        .https_only(true)
         .timeout(Duration::from_secs(20))
         .connect_timeout(Duration::from_secs(10))
         .build()

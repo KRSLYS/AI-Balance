@@ -31,6 +31,8 @@ class UsageWidget : AppWidgetProvider() {
     private val PROVIDERS = mapOf(
       "claude" to "Claude", "codex" to "ChatGPT", "copilot" to "Copilot", "cursor" to "Cursor",
       "kimi" to "Kimi", "openrouter" to "OpenRouter", "zai" to "Z.ai", "ollama" to "Ollama",
+      "grok" to "Grok", "amp" to "Amp", "opencode" to "OpenCode", "muse" to "Muse Code",
+      "devin" to "Devin", "copilotorg" to "Copilot Org",
     )
 
     private class Limit(val name: String, val percent: Int)

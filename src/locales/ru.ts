@@ -77,6 +77,7 @@ export const ru: Locale = {
     priority: "Важное",
     allUsage: "Всё использование",
     openApp: "Открыть AI Balance",
+    organization: "Организация GitHub",
   },
   labels: {
     Session: "Сессия",
@@ -99,5 +100,13 @@ export const ru: Locale = {
     "Key Limit": "Лимит ключа",
     "Web Searches": "Веб-поиск",
     "Purchased Credits": "Купленные кредиты",
+    Daily: "День",
+    "Agent Usage": "Использование агента",
+    "Orb Hours": "Часы Orb",
+    "Amp Free": "Amp Free",
+    "Individual Credits": "Личные кредиты",
+    "Org Credits": "Кредиты организации",
+    "Org Spend": "Расходы организации",
+    "Extra Usage Cap": "Лимит доп. использования",
   },
 };

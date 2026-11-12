@@ -77,6 +77,7 @@ export const nl: Locale = {
     priority: "Prioriteit",
     allUsage: "Al het gebruik",
     openApp: "AI Balance openen",
+    organization: "GitHub-organisatie",
   },
   labels: {
     Session: "Sessie",
@@ -99,5 +100,13 @@ export const nl: Locale = {
     "Key Limit": "Sleutellimiet",
     "Web Searches": "Zoekopdrachten",
     "Purchased Credits": "Gekocht tegoed",
+    Daily: "Dagelijks",
+    "Agent Usage": "Agentgebruik",
+    "Orb Hours": "Orb-uren",
+    "Amp Free": "Amp gratis",
+    "Individual Credits": "Persoonlijk tegoed",
+    "Org Credits": "Tegoed van de organisatie",
+    "Org Spend": "Uitgaven van de organisatie",
+    "Extra Usage Cap": "Limiet voor extra gebruik",
   },
 };

@@ -18,6 +18,12 @@ balances. On desktop it lives in the system tray and warns you before a limit ru
 | Cursor | Browser (cursor.com) | Total Usage, Cursor Models, Other Models, On-Demand |
 | Copilot | Device code (GitHub) | Premium, Chat, Completions, Extra Usage |
 | Kimi | Sign-in link (Kimi Code) | Weekly, Session |
+| Grok | Sign-in link (xAI) | Weekly, Extra Usage Cap |
+| Amp | Sign-in link (Amp) | Agent Usage, Orb Hours, Amp Free, Individual Credits |
+| OpenCode | Sign-in link (OpenCode Console) | Session, Weekly, Monthly |
+| Muse Code | Sign-in link (Meta) | Session, Weekly |
+| Devin | Browser (Windsurf), then a pasted token | Daily, Weekly, Extra Usage |
+| Copilot Organization | Organization name and a token | Org Credits, Org Spend |
 | OpenRouter | API key or Management key | Balance, Today, This Week, This Month, Key Limit |
 | Z.ai | API key | Session, Weekly, Web Searches |
 | Ollama | API key | Session, Weekly, Monthly, Purchased Credits |

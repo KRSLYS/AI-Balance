@@ -21,6 +21,12 @@ pub enum ProviderKind {
     Copilot,
     Cursor,
     Kimi,
+    Grok,
+    Amp,
+    OpenCode,
+    Muse,
+    Devin,
+    CopilotOrg,
     OpenRouter,
     Zai,
     Ollama,
@@ -34,6 +40,12 @@ impl ProviderKind {
             Self::Copilot => "Copilot",
             Self::Cursor => "Cursor",
             Self::Kimi => "Kimi",
+            Self::Grok => "Grok",
+            Self::Amp => "Amp",
+            Self::OpenCode => "OpenCode",
+            Self::Muse => "Muse Code",
+            Self::Devin => "Devin",
+            Self::CopilotOrg => "Copilot Organization",
             Self::OpenRouter => "OpenRouter",
             Self::Zai => "Z.ai",
             Self::Ollama => "Ollama",
@@ -41,7 +53,7 @@ impl ProviderKind {
     }
 
     pub fn uses_api_key(self) -> bool {
-        matches!(self, Self::OpenRouter | Self::Zai | Self::Ollama)
+        matches!(self, Self::OpenRouter | Self::Zai | Self::Ollama | Self::CopilotOrg)
     }
 }
 

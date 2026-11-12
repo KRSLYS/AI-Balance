@@ -1,11 +1,17 @@
 //! One module per provider. Each reads usage with a credential and maps the answer to metric lines.
 
+pub mod amp;
 pub mod claude;
 pub mod codex;
 pub mod copilot;
+pub mod copilot_org;
 pub mod cursor;
+pub mod devin;
+pub mod grok;
 pub mod kimi;
+pub mod muse;
 pub mod ollama;
+pub mod opencode;
 pub mod openrouter;
 pub mod zai;
 
@@ -69,6 +75,9 @@ async fn renew(http: &Client, kind: ProviderKind, credential: &mut Credential) -
         ProviderKind::Codex => codex::refresh(http, &token).await?,
         ProviderKind::Cursor => cursor::refresh(http, &token).await?,
         ProviderKind::Kimi => kimi::refresh(http, &token, &device_id).await?,
+        ProviderKind::Grok => grok::refresh(http, &token).await?,
+        ProviderKind::Amp => amp::refresh(http, &token).await?,
+        ProviderKind::OpenCode => opencode::refresh(http, &token).await?,
         _ => return Err(ProviderError::SignInExpired),
     };
     *access_token = grant.access_token;
@@ -86,6 +95,12 @@ async fn read(http: &Client, kind: ProviderKind, credential: &mut Credential) ->
         ProviderKind::Copilot => copilot::usage(http, credential).await,
         ProviderKind::Cursor => cursor::usage(http, credential).await,
         ProviderKind::Kimi => kimi::usage(http, credential).await,
+        ProviderKind::Grok => grok::usage(http, credential).await,
+        ProviderKind::Amp => amp::usage(http, credential).await,
+        ProviderKind::OpenCode => opencode::usage(http, credential).await,
+        ProviderKind::Muse => muse::usage(http, credential).await,
+        ProviderKind::Devin => devin::usage(http, credential).await,
+        ProviderKind::CopilotOrg => copilot_org::usage(http, credential).await,
         ProviderKind::OpenRouter => openrouter::usage(http, credential.secret()).await,
         ProviderKind::Zai => zai::usage(http, credential.secret()).await,
         ProviderKind::Ollama => ollama::usage(http, credential.secret()).await,

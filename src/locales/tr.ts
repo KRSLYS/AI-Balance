@@ -77,6 +77,7 @@ export const tr: Locale = {
     priority: "Öncelik",
     allUsage: "Tüm kullanım",
     openApp: "AI Balance’ı aç",
+    organization: "GitHub kuruluşu",
   },
   labels: {
     Session: "Oturum",
@@ -99,5 +100,13 @@ export const tr: Locale = {
     "Key Limit": "Anahtar sınırı",
     "Web Searches": "Web aramaları",
     "Purchased Credits": "Satın alınan krediler",
+    Daily: "Günlük",
+    "Agent Usage": "Aracı kullanımı",
+    "Orb Hours": "Orb saatleri",
+    "Amp Free": "Amp ücretsiz",
+    "Individual Credits": "Bireysel krediler",
+    "Org Credits": "Kuruluş kredileri",
+    "Org Spend": "Kuruluş harcaması",
+    "Extra Usage Cap": "Ek kullanım üst sınırı",
   },
 };

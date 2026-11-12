@@ -76,6 +76,7 @@ export const en = {
     priority: "Priority",
     allUsage: "All Usage",
     openApp: "Open AI Balance",
+    organization: "GitHub organization",
   },
   labels: {
     Session: "Session",
@@ -98,6 +99,14 @@ export const en = {
     "Key Limit": "Key Limit",
     "Web Searches": "Web Searches",
     "Purchased Credits": "Purchased Credits",
+    Daily: "Daily",
+    "Agent Usage": "Agent Usage",
+    "Orb Hours": "Orb Hours",
+    "Amp Free": "Amp Free",
+    "Individual Credits": "Individual Credits",
+    "Org Credits": "Org Credits",
+    "Org Spend": "Org Spend",
+    "Extra Usage Cap": "Extra Usage Cap",
   },
 };
 

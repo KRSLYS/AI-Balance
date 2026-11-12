@@ -52,6 +52,7 @@ function KeyForm({ provider, onDone }: { provider: ProviderId; onDone: () => voi
   const info = providerInfo(provider);
   const [key, setKey] = useState("");
   const [name, setName] = useState("");
+  const [organization, setOrganization] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,7 +61,7 @@ function KeyForm({ provider, onDone }: { provider: ProviderId; onDone: () => voi
     setBusy(true);
     setError(null);
     try {
-      await api.addApiKeyAccount(provider, key, name || undefined);
+      await api.addApiKeyAccount(provider, key, name || undefined, organization || undefined);
       onDone();
     } catch (failure) {
       setError(String(failure));
@@ -71,11 +72,17 @@ function KeyForm({ provider, onDone }: { provider: ProviderId; onDone: () => voi
 
   return (
     <form className="form" onSubmit={submit}>
+      {info.needsOrganization && (
+        <label>
+          {i18n.t("organization")}
+          <input autoFocus dir="ltr" autoComplete="off" spellCheck={false} placeholder="acme-corp" value={organization} onChange={(event) => setOrganization(event.target.value)} />
+        </label>
+      )}
       <label>
         {i18n.t("apiKey")}
         <input
           type="password"
-          autoFocus
+          autoFocus={!info.needsOrganization}
           autoComplete="off"
           spellCheck={false}
           dir="ltr"
@@ -95,7 +102,7 @@ function KeyForm({ provider, onDone }: { provider: ProviderId; onDone: () => voi
             {i18n.t("getKey")} ↗
           </button>
         )}
-        <button className="primary" disabled={busy || !key.trim()}>
+        <button className="primary" disabled={busy || !key.trim() || (info.needsOrganization === true && !organization.trim())}>
           {busy ? i18n.t("checking") : i18n.t("add")}
         </button>
       </div>

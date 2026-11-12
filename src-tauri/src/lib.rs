@@ -269,13 +269,30 @@ fn save_account(app: &AppHandle, provider: ProviderKind, label: String, credenti
 
 /// Adds an API-key account after one read proves the key works.
 #[tauri::command]
-async fn add_api_key_account(app: AppHandle, provider: ProviderKind, key: String, label: Option<String>) -> Result<Account, String> {
+async fn add_api_key_account(
+    app: AppHandle,
+    provider: ProviderKind,
+    key: String,
+    label: Option<String>,
+    organization: Option<String>,
+) -> Result<Account, String> {
     let key = key.trim().to_string();
     if key.is_empty() || !provider.uses_api_key() {
         return Err("Enter an API key.".into());
     }
     let state = app.state::<AppState>();
     let mut credential = Credential::ApiKey { key: key.clone() };
+    let mut label = label;
+    if provider == ProviderKind::CopilotOrg {
+        // An organization's billing is read with a token and the organization's name.
+        let organization = organization.unwrap_or_default().trim().to_string();
+        if !providers::copilot_org::valid_organization(&organization) {
+            return Err("Enter the organization's GitHub name, such as acme-corp.".into());
+        }
+        credential =
+            Credential::oauth(key.clone(), None, None).with_extra(providers::copilot_org::ORGANIZATION_KEY, Some(organization.clone()));
+        label = label.filter(|label| !label.trim().is_empty()).or(Some(organization));
+    }
     let usage = providers::fetch(&state.http, provider, &mut credential).await.map_err(|error| error.to_string())?;
     let mut name = label.map(|label| label.trim().to_string()).filter(|label| !label.is_empty());
     if name.is_none() && provider == ProviderKind::Ollama {

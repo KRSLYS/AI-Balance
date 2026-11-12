@@ -77,6 +77,7 @@ export const ar: Locale = {
     priority: "الأولوية",
     allUsage: "كل الاستخدام",
     openApp: "فتح AI Balance",
+    organization: "مؤسسة GitHub",
   },
   labels: {
     Session: "الجلسة",
@@ -99,5 +100,13 @@ export const ar: Locale = {
     "Key Limit": "حد المفتاح",
     "Web Searches": "بحث الويب",
     "Purchased Credits": "الرصيد المشترى",
+    Daily: "اليومي",
+    "Agent Usage": "استخدام الوكيل",
+    "Orb Hours": "ساعات Orb",
+    "Amp Free": "Amp المجاني",
+    "Individual Credits": "الرصيد الشخصي",
+    "Org Credits": "رصيد المؤسسة",
+    "Org Spend": "إنفاق المؤسسة",
+    "Extra Usage Cap": "سقف الاستخدام الإضافي",
   },
 };

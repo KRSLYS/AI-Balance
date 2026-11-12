@@ -16,7 +16,7 @@ use tokio::time::{sleep, timeout, Instant};
 
 use crate::http::{self, Resp};
 use crate::model::{Credential, ProviderKind};
-use crate::providers::{claude, codex, copilot, cursor, kimi};
+use crate::providers::{amp, claude, codex, copilot, cursor, devin, grok, kimi, muse, opencode};
 
 const BROWSER_SIGN_IN_TIMEOUT: Duration = Duration::from_secs(10 * 60);
 
@@ -36,11 +36,96 @@ pub struct LoginPrompt {
 }
 
 pub enum Pending {
-    AuthCode { kind: ProviderKind, verifier: String, state: String, redirect_uri: String, listener: Option<TcpListener> },
-    GitHubDevice { device_code: String, interval: u64, expires_in: u64 },
-    KimiDevice { device_code: String, device_id: String, interval: u64, expires_in: u64 },
-    CodexDevice { device_auth_id: String, user_code: String, interval: u64 },
-    CursorPoll { uuid: String, verifier: String },
+    AuthCode {
+        kind: ProviderKind,
+        verifier: String,
+        state: String,
+        redirect_uri: String,
+        listener: Option<TcpListener>,
+    },
+    GitHubDevice {
+        device_code: String,
+        interval: u64,
+        expires_in: u64,
+    },
+    KimiDevice {
+        device_code: String,
+        device_id: String,
+        interval: u64,
+        expires_in: u64,
+    },
+    CodexDevice {
+        device_auth_id: String,
+        user_code: String,
+        interval: u64,
+    },
+    CursorPoll {
+        uuid: String,
+        verifier: String,
+    },
+    /// A standard device sign-in (RFC 8628), for the providers that need nothing special.
+    Device {
+        kind: ProviderKind,
+        device_code: String,
+        interval: u64,
+        expires_in: u64,
+    },
+    /// The user pastes a one-time token the provider's page shows.
+    PastedToken {
+        kind: ProviderKind,
+    },
+}
+
+/// Where a standard device sign-in starts and ends.
+struct DeviceFlow {
+    start_url: &'static str,
+    token_url: &'static str,
+    client_id: &'static str,
+    scopes: Option<&'static str>,
+    start_fields: &'static [(&'static str, &'static str)],
+    /// A page that takes the code in its address, when the provider has one.
+    verification_page: Option<&'static str>,
+}
+
+fn device_flow(kind: ProviderKind) -> Option<DeviceFlow> {
+    let flow = |start_url, token_url, client_id| DeviceFlow {
+        start_url,
+        token_url,
+        client_id,
+        scopes: None,
+        start_fields: &[],
+        verification_page: None,
+    };
+    Some(match kind {
+        ProviderKind::Grok => DeviceFlow { scopes: Some(grok::SCOPES), ..flow(grok::DEVICE_CODE_URL, grok::TOKEN_URL, grok::CLIENT_ID) },
+        ProviderKind::Amp => {
+            DeviceFlow { verification_page: Some(amp::VERIFICATION_PAGE), ..flow(amp::DEVICE_CODE_URL, amp::TOKEN_URL, amp::CLIENT_ID) }
+        }
+        ProviderKind::OpenCode => DeviceFlow {
+            start_fields: &[("supports_org_scope", "true")],
+            ..flow(opencode::DEVICE_CODE_URL, opencode::TOKEN_URL, opencode::CLIENT_ID)
+        },
+        ProviderKind::Muse => flow(muse::DEVICE_CODE_URL, muse::TOKEN_URL, muse::CLIENT_ID),
+        _ => return None,
+    })
+}
+
+/// The page to open for a device sign-in, and the code to type there when the page does not
+/// already carry it. Only an https page is ever opened.
+fn device_page(flow: &DeviceFlow, device: &Value) -> LoginResult<(String, Option<String>)> {
+    let code = required(device, "user_code")?;
+    let with_code = match flow.verification_page {
+        Some(page) => url::Url::parse_with_params(page, [("user_code", code.as_str())]).ok().map(String::from),
+        None => http::text(&device["verification_uri_complete"]),
+    };
+    let https = |address: &String| url::Url::parse(address).map(|url| url.scheme() == "https" && url.has_host()).unwrap_or(false);
+    match with_code.filter(https) {
+        Some(url) => Ok((url, None)),
+        None => {
+            let url = http::text(&device["verification_uri"]).filter(https).ok_or("The sign-in service returned an invalid response.")?;
+            Ok((url, Some(code)))
+        }
+    }
 }
 
 fn random_token(bytes: usize) -> String {
@@ -150,7 +235,32 @@ pub async fn start(http: &Client, kind: ProviderKind, mobile: bool) -> LoginResu
                 .append_pair("redirectTarget", "cli");
             Ok((prompt(url.into(), None, false), Pending::CursorPoll { uuid, verifier }))
         }
-        _ => Err(format!("{} uses an API key.", kind.display_name())),
+        ProviderKind::Devin => {
+            let mut url = url::Url::parse(devin::TOKEN_PAGE_URL).expect("static URL");
+            url.query_pairs_mut()
+                .append_pair("response_type", "token")
+                .append_pair("redirect_uri", "show-auth-token")
+                .append_pair("state", &uuid_v4())
+                .append_pair("scope", "openid profile email")
+                .append_pair("redirect_parameters_type", "query");
+            Ok((prompt(url.into(), None, true), Pending::PastedToken { kind }))
+        }
+        _ => {
+            let Some(flow) = device_flow(kind) else { return Err(format!("{} uses an API key.", kind.display_name())) };
+            let mut form: Vec<(&str, &str)> = flow.start_fields.to_vec();
+            form.push(("client_id", flow.client_id));
+            form.extend(flow.scopes.map(|scopes| ("scope", scopes)));
+            let request = http.post(flow.start_url).header("Accept", "application/json").form(&form);
+            let device = decode(&http::send(request).await.map_err(network)?)?;
+            let (url, user_code) = device_page(&flow, &device)?;
+            let pending = Pending::Device {
+                kind,
+                device_code: required(&device, "device_code")?,
+                interval: http::num(&device["interval"]).unwrap_or(5.0) as u64,
+                expires_in: http::num(&device["expires_in"]).filter(|seconds| *seconds > 0.0).unwrap_or(900.0) as u64,
+            };
+            Ok((prompt(url, user_code, false), pending))
+        }
     }
 }
 
@@ -266,6 +376,41 @@ pub async fn finish(http: &Client, pending: Pending, mut pasted: mpsc::Receiver<
                 Credential::oauth(access, http::text(&token["refresh_token"]), expires_at).with_extra(kimi::DEVICE_ID_KEY, Some(device_id));
             Ok((label, credential))
         }
+        Pending::Device { kind, device_code, interval, expires_in } => {
+            let flow = device_flow(kind).ok_or("This provider has no device sign-in.")?;
+            let name = kind.display_name();
+            let token = poll(interval, expires_in, || async {
+                let form = [
+                    ("client_id", flow.client_id),
+                    ("device_code", device_code.as_str()),
+                    ("grant_type", "urn:ietf:params:oauth:grant-type:device_code"),
+                ];
+                let request = http.post(flow.token_url).header("Accept", "application/json").form(&form);
+                let body = http::send(request).await.ok().and_then(|response| response.json()).unwrap_or(Value::Null);
+                if http::text(&body["access_token"]).is_some() {
+                    return Poll::Done(body);
+                }
+                match body["error"].as_str() {
+                    Some("authorization_pending") | None => Poll::Pending,
+                    Some("slow_down") => Poll::SlowDown,
+                    Some("expired_token") => Poll::Failed(format!("The {name} sign-in expired.")),
+                    Some("access_denied") => Poll::Failed(format!("{name} sign-in was denied.")),
+                    Some(_) => Poll::Failed(format!("{name} sign-in failed.")),
+                }
+            })
+            .await?;
+            device_account(http, kind, &token).await
+        }
+        Pending::PastedToken { kind } => {
+            let pasted =
+                timeout(BROWSER_SIGN_IN_TIMEOUT, pasted.recv()).await.map_err(|_| "Sign-in timed out.".to_string())?.unwrap_or_default();
+            let pasted = pasted.trim();
+            if pasted.is_empty() {
+                return Err("That token is not valid.".into());
+            }
+            debug_assert_eq!(kind, ProviderKind::Devin);
+            devin_account(http, pasted).await
+        }
         Pending::CodexDevice { device_auth_id, user_code, interval } => {
             let grant = poll(interval, 900, || async {
                 let body = json!({"device_auth_id": device_auth_id, "user_code": user_code});
@@ -312,6 +457,60 @@ pub async fn finish(http: &Client, pending: Pending, mut pasted: mpsc::Receiver<
             Ok((label, Credential::oauth(access, Some(refresh), expires_at)))
         }
     }
+}
+
+/// Names the account a device sign-in produced and builds its credential.
+async fn device_account(http: &Client, kind: ProviderKind, token: &Value) -> LoginResult<(String, Credential)> {
+    let access = required(token, "access_token")?;
+    let refresh = http::text(&token["refresh_token"]);
+    let expires_at = http::num(&token["expires_in"])
+        .map(|seconds| crate::model::now_ms() + (seconds * 1000.0) as i64)
+        .or_else(|| http::jwt_expiry_ms(&access));
+    let fallback = format!("{} Account", kind.display_name());
+    match kind {
+        ProviderKind::Grok => {
+            let email = http::jwt_payload(&access).and_then(|claims| http::text(&claims["email"]));
+            Ok((email.unwrap_or(fallback), Credential::oauth(access, refresh, expires_at)))
+        }
+        ProviderKind::Amp => {
+            // The sign-in proves it can read usage, and the usage text names the account.
+            let balance = amp::balance(http, &access).await.map_err(network)?;
+            let text = amp::display_text(&balance).map_err(|error| error.to_string())?;
+            let expires_at = http::jwt_expiry_ms(&access).or(expires_at);
+            Ok((amp::email(&text).unwrap_or(fallback), Credential::oauth(access, refresh, expires_at)))
+        }
+        ProviderKind::OpenCode => {
+            let org = required(token, opencode::ORG_KEY)?;
+            let request = http.get(opencode::USER_URL).bearer_auth(&access).header("x-org-id", &org);
+            let user = decode(&http::send(request).await.map_err(network)?)?;
+            let credential = Credential::oauth(access, refresh, expires_at).with_extra(opencode::ORG_KEY, Some(org));
+            Ok((http::text(&user["email"]).unwrap_or(fallback), credential))
+        }
+        ProviderKind::Muse => {
+            let account = muse::account(http, &access).await.map_err(|error| error.to_string())?;
+            Ok((http::text(&account["user_email"]).unwrap_or(fallback), Credential::oauth(access, None, None)))
+        }
+        _ => Err("This provider has no device sign-in.".into()),
+    }
+}
+
+/// Trades Windsurf's one-time token for the account's API key, the key its editor plugins use.
+async fn devin_account(http: &Client, pasted: &str) -> LoginResult<(String, Credential)> {
+    let request = http.post(devin::REGISTER_URL).json(&json!({"firebase_id_token": pasted}));
+    let response = http::send(request).await.map_err(network)?;
+    let expired = "Windsurf rejected that token. A token works for five minutes, so open the page again for a new one.";
+    if matches!(response.status, 401 | 403) {
+        return Err(expired.into());
+    }
+    let registered = decode(&response)?;
+    let server = http::text(&registered["api_server_url"]).and_then(|address| devin::trusted_server(&address));
+    let credential = Credential::oauth(required(&registered, "api_key")?, None, None).with_extra(devin::SERVER_KEY, server);
+    let status = devin::user_status(http, &credential).await.map_err(network)?;
+    if matches!(status.status, 401 | 403) {
+        return Err(expired.into());
+    }
+    let user = decode(&status)?;
+    Ok((http::text(&user["userStatus"]["email"]).unwrap_or_else(|| "Devin Account".into()), credential))
 }
 
 async fn claude_exchange(http: &Client, code: &str, state: &str, redirect_uri: &str, verifier: &str) -> LoginResult<(String, Credential)> {
@@ -509,6 +708,28 @@ mod tests {
         let pages = browser.await.unwrap();
         assert!(pages[0].starts_with("HTTP/1.1 404"));
         assert!(pages[1].starts_with("HTTP/1.1 200") && pages[1].contains("Signed in"));
+    }
+
+    #[test]
+    fn a_device_page_carries_the_code_when_it_can() {
+        let amp_flow = device_flow(ProviderKind::Amp).unwrap();
+        let page = device_page(&amp_flow, &json!({"user_code": "AB CD", "verification_uri": "https://ampcode.com/x"})).unwrap();
+        assert_eq!(page, ("https://ampcode.com/auth/cli/device?user_code=AB+CD".to_string(), None));
+
+        let grok_flow = device_flow(ProviderKind::Grok).unwrap();
+        let complete = json!({"user_code": "WXYZ", "verification_uri": "https://x.ai/device", "verification_uri_complete": "https://x.ai/device?code=WXYZ"});
+        assert_eq!(device_page(&grok_flow, &complete).unwrap(), ("https://x.ai/device?code=WXYZ".to_string(), None));
+        let plain = json!({"user_code": "WXYZ", "verification_uri": "https://x.ai/device"});
+        assert_eq!(device_page(&grok_flow, &plain).unwrap(), ("https://x.ai/device".to_string(), Some("WXYZ".to_string())));
+    }
+
+    #[test]
+    fn a_device_page_that_is_not_https_is_refused() {
+        let flow = device_flow(ProviderKind::Grok).unwrap();
+        assert!(device_page(&flow, &json!({"user_code": "A", "verification_uri": "http://x.ai/device"})).is_err());
+        assert!(device_page(&flow, &json!({"user_code": "A", "verification_uri": "javascript:alert(1)"})).is_err());
+        let mixed = json!({"user_code": "A", "verification_uri": "https://x.ai/device", "verification_uri_complete": "file:///etc/passwd"});
+        assert_eq!(device_page(&flow, &mixed).unwrap().0, "https://x.ai/device");
     }
 
     #[test]

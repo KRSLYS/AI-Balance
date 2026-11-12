@@ -3,7 +3,7 @@ import { listen } from "@tauri-apps/api/event";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { demoState } from "./demo";
 
-export type ProviderId = "claude" | "codex" | "copilot" | "cursor" | "kimi" | "openrouter" | "zai" | "ollama";
+export type ProviderId = "claude" | "codex" | "copilot" | "cursor" | "kimi" | "grok" | "amp" | "opencode" | "muse" | "devin" | "copilotorg" | "openrouter" | "zai" | "ollama";
 
 export type Format =
   | { type: "percent" }
@@ -73,8 +73,8 @@ const demoChanged = () => demoListeners.forEach((listener) => listener(demo));
 export const api = {
   getState: (): Promise<ViewState> => (inApp ? invoke("get_state") : Promise.resolve(demo)),
   refresh: (): Promise<void> => (inApp ? invoke("refresh") : new Promise((done) => setTimeout(done, 600))),
-  addApiKeyAccount: (provider: ProviderId, key: string, label?: string): Promise<Account> =>
-    inApp ? invoke("add_api_key_account", { provider, key, label }) : Promise.reject("Demo mode: run the app to add accounts."),
+  addApiKeyAccount: (provider: ProviderId, key: string, label?: string, organization?: string): Promise<Account> =>
+    inApp ? invoke("add_api_key_account", { provider, key, label, organization }) : Promise.reject("Demo mode: run the app to add accounts."),
   beginLogin: (provider: ProviderId): Promise<LoginPrompt> =>
     inApp
       ? invoke("begin_login", { provider })

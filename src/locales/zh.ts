@@ -77,6 +77,7 @@ export const zh: Locale = {
     priority: "优先",
     allUsage: "全部用量",
     openApp: "打开 AI Balance",
+    organization: "GitHub 组织",
   },
   labels: {
     Session: "会话",
@@ -99,5 +100,13 @@ export const zh: Locale = {
     "Key Limit": "密钥上限",
     "Web Searches": "网页搜索",
     "Purchased Credits": "已购点数",
+    Daily: "每日",
+    "Agent Usage": "代理用量",
+    "Orb Hours": "Orb 时长",
+    "Amp Free": "Amp 免费额度",
+    "Individual Credits": "个人点数",
+    "Org Credits": "组织点数",
+    "Org Spend": "组织支出",
+    "Extra Usage Cap": "额外用量上限",
   },
 };

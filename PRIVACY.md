@@ -25,7 +25,7 @@ Removing an account deletes its credential. Uninstalling the app deletes everyth
 ## What the app sends, and to whom
 
 To show your usage, the app talks directly to the providers whose accounts you add: Anthropic
-(Claude), OpenAI (ChatGPT), Cursor, GitHub (Copilot), Moonshot AI (Kimi), OpenRouter, Z.ai and
+(Claude), OpenAI (ChatGPT), Cursor, GitHub (Copilot), Moonshot AI (Kimi), xAI (Grok), Amp, OpenCode, Meta (Muse Code), Windsurf (Devin), OpenRouter, Z.ai and
 Ollama. Each request carries only that provider's own credential. Each provider handles the request
 under its own privacy policy.
 
