@@ -24,6 +24,7 @@ balances. On desktop it lives in the system tray and warns you before a limit ru
 | Muse Code | Sign-in link (Meta) | Session, Weekly |
 | Devin | Browser (Windsurf), then a pasted token | Daily, Weekly, Extra Usage |
 | Copilot Organization | Organization name and a token | Org Credits, Org Spend |
+| Claude API | Admin API key | Today, Yesterday, This Month (API spend) |
 | OpenRouter | API key or Management key | Balance, Today, This Week, This Month, Key Limit |
 | Z.ai | API key | Session, Weekly, Web Searches |
 | Ollama | API key | Session, Weekly, Monthly, Purchased Credits |
@@ -105,7 +106,7 @@ The same code builds two editions, chosen at build time by the `AIBALANCE_EDITIO
 
 | | Full (the default) | Store (`AIBALANCE_EDITION=store`) |
 |---|---|---|
-| Providers | All of them | Only those with a published API: OpenRouter and Copilot Organization |
+| Providers | All of them | Only those with a published API: Claude API, OpenRouter and Copilot Organization |
 | Updates | Tells you when a newer release is out | Left to the app store |
 | Where | Direct downloads: desktop installers and the Android `.apk` | Google Play (`.aab`) and the App Store (`.ipa`) |
 

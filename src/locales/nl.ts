@@ -96,6 +96,7 @@ export const nl: Locale = {
     Completions: "Aanvullingen",
     Balance: "Saldo",
     Today: "Vandaag",
+    Yesterday: "Gisteren",
     "This Week": "Deze week",
     "This Month": "Deze maand",
     "Key Limit": "Sleutellimiet",

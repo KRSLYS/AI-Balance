@@ -5,7 +5,7 @@ What is ready in the code, what you still have to do yourself, and what a review
 ## Ready in the code
 
 - **A store edition.** Builds made with `AIBALANCE_EDITION=store` offer only providers with a
-  published API (OpenRouter and Copilot Organization), refuse the others even if asked, and never
+  published API (Claude API, OpenRouter and Copilot Organization), refuse the others even if asked, and never
   look for updates themselves. The release workflow builds the Google Play bundle and the App Store
   build this way. The full edition stays on direct download.
 
@@ -134,7 +134,7 @@ Read this before paying for the developer accounts.
   outside their own apps. A provider could block the app's requests at any time, and in the worst
   case act against an account that uses it.
 - **What the store edition does about it.** It leaves those providers out. The price is a thin app:
-  two providers today. Adding the usage APIs that providers publish for API and team accounts is
+  three providers today. Adding the usage APIs that providers publish for API and team accounts is
   what makes it worth listing.
 - **Do not advertise the full edition inside the store app.** Google Play forbids an app from
   installing or updating itself from outside Play, and both stores reject apps that steer users

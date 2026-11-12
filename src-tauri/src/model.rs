@@ -27,6 +27,7 @@ pub enum ProviderKind {
     Muse,
     Devin,
     CopilotOrg,
+    ClaudeApi,
     OpenRouter,
     Zai,
     Ollama,
@@ -46,6 +47,7 @@ impl ProviderKind {
             Self::Muse => "Muse Code",
             Self::Devin => "Devin",
             Self::CopilotOrg => "Copilot Organization",
+            Self::ClaudeApi => "Claude API",
             Self::OpenRouter => "OpenRouter",
             Self::Zai => "Z.ai",
             Self::Ollama => "Ollama",
@@ -55,16 +57,16 @@ impl ProviderKind {
     /// Read through an API the provider publishes for this purpose, with a key the user creates for it.
     /// The others sign in the way the provider's own tools do and read what those tools read.
     pub fn is_official(self) -> bool {
-        matches!(self, Self::OpenRouter | Self::CopilotOrg)
+        matches!(self, Self::OpenRouter | Self::CopilotOrg | Self::ClaudeApi)
     }
 
     pub fn uses_api_key(self) -> bool {
-        matches!(self, Self::OpenRouter | Self::Zai | Self::Ollama | Self::CopilotOrg)
+        matches!(self, Self::OpenRouter | Self::Zai | Self::Ollama | Self::CopilotOrg | Self::ClaudeApi)
     }
 }
 
 impl ProviderKind {
-    pub const ALL: [Self; 14] = [
+    pub const ALL: [Self; 15] = [
         Self::Claude,
         Self::Codex,
         Self::Cursor,
@@ -76,6 +78,7 @@ impl ProviderKind {
         Self::Muse,
         Self::Devin,
         Self::CopilotOrg,
+        Self::ClaudeApi,
         Self::OpenRouter,
         Self::Zai,
         Self::Ollama,
@@ -324,7 +327,7 @@ mod tests {
 
     #[test]
     fn the_store_edition_offers_only_published_apis() {
-        assert_eq!(Edition::Store.providers(), [ProviderKind::CopilotOrg, ProviderKind::OpenRouter]);
+        assert_eq!(Edition::Store.providers(), [ProviderKind::CopilotOrg, ProviderKind::ClaudeApi, ProviderKind::OpenRouter]);
         assert_eq!(Edition::Full.providers().len(), ProviderKind::ALL.len());
         assert!(!Edition::Store.offers(ProviderKind::Claude));
         assert!(!Edition::Store.checks_for_updates());

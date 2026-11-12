@@ -96,6 +96,7 @@ export const ru: Locale = {
     Completions: "Автодополнения",
     Balance: "Баланс",
     Today: "Сегодня",
+    Yesterday: "Вчера",
     "This Week": "Эта неделя",
     "This Month": "Этот месяц",
     "Key Limit": "Лимит ключа",

@@ -96,6 +96,7 @@ export const it: Locale = {
     Completions: "Completamenti",
     Balance: "Saldo",
     Today: "Oggi",
+    Yesterday: "Ieri",
     "This Week": "Questa settimana",
     "This Month": "Questo mese",
     "Key Limit": "Limite della chiave",

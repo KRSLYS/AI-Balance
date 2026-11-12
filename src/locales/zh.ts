@@ -96,6 +96,7 @@ export const zh: Locale = {
     Completions: "补全",
     Balance: "余额",
     Today: "今天",
+    Yesterday: "昨天",
     "This Week": "本周",
     "This Month": "本月",
     "Key Limit": "密钥上限",

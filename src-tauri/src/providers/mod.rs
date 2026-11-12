@@ -2,6 +2,7 @@
 
 pub mod amp;
 pub mod claude;
+pub mod claude_api;
 pub mod codex;
 pub mod copilot;
 pub mod copilot_org;
@@ -101,6 +102,7 @@ async fn read(http: &Client, kind: ProviderKind, credential: &mut Credential) ->
         ProviderKind::Muse => muse::usage(http, credential).await,
         ProviderKind::Devin => devin::usage(http, credential).await,
         ProviderKind::CopilotOrg => copilot_org::usage(http, credential).await,
+        ProviderKind::ClaudeApi => claude_api::usage(http, credential.secret()).await,
         ProviderKind::OpenRouter => openrouter::usage(http, credential.secret()).await,
         ProviderKind::Zai => zai::usage(http, credential.secret()).await,
         ProviderKind::Ollama => ollama::usage(http, credential.secret()).await,

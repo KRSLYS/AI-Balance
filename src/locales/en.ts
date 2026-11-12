@@ -95,6 +95,7 @@ export const en = {
     Completions: "Completions",
     Balance: "Balance",
     Today: "Today",
+    Yesterday: "Yesterday",
     "This Week": "This Week",
     "This Month": "This Month",
     "Key Limit": "Key Limit",

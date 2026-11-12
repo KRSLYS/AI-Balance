@@ -3,7 +3,7 @@ import { listen } from "@tauri-apps/api/event";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { demoState } from "./demo";
 
-export type ProviderId = "claude" | "codex" | "copilot" | "cursor" | "kimi" | "grok" | "amp" | "opencode" | "muse" | "devin" | "copilotorg" | "openrouter" | "zai" | "ollama";
+export type ProviderId = "claude" | "codex" | "copilot" | "cursor" | "kimi" | "grok" | "amp" | "opencode" | "muse" | "devin" | "copilotorg" | "claudeapi" | "openrouter" | "zai" | "ollama";
 
 export type Format =
   | { type: "percent" }

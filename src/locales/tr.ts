@@ -96,6 +96,7 @@ export const tr: Locale = {
     Completions: "Tamamlamalar",
     Balance: "Bakiye",
     Today: "Bugün",
+    Yesterday: "Dün",
     "This Week": "Bu hafta",
     "This Month": "Bu ay",
     "Key Limit": "Anahtar sınırı",

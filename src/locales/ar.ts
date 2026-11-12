@@ -96,6 +96,7 @@ export const ar: Locale = {
     Completions: "الإكمال",
     Balance: "الرصيد",
     Today: "اليوم",
+    Yesterday: "أمس",
     "This Week": "هذا الأسبوع",
     "This Month": "هذا الشهر",
     "Key Limit": "حد المفتاح",
