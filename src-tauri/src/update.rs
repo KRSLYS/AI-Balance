@@ -72,13 +72,13 @@ impl PartialOrd for Version {
     }
 }
 
-/// The newest release that is newer than `current`. A final release is never offered a
-/// pre-release; a pre-release is offered both.
+/// The newest final release that is newer than `current`. A pre-release is never offered, whatever
+/// is installed: someone running a beta is moved on only by the final release.
 pub fn newest<'a>(current: &str, releases: impl Iterator<Item = (&'a str, &'a str)>) -> Option<Update> {
     let current = Version::parse(current)?;
     releases
         .filter_map(|(tag, url)| Some((Version::parse(tag)?, tag, url)))
-        .filter(|(version, _, _)| *version > current && (current.is_prerelease() || !version.is_prerelease()))
+        .filter(|(version, _, _)| *version > current && !version.is_prerelease())
         .max_by(|a, b| a.0.cmp(&b.0))
         .map(|(_, tag, url)| Update { version: tag.trim_start_matches('v').to_string(), url: url.to_string() })
 }
@@ -117,15 +117,21 @@ mod tests {
     }
 
     #[test]
-    fn a_final_release_is_not_offered_a_pre_release() {
+    fn a_pre_release_is_never_offered() {
         assert_eq!(offer("0.1.0", &["v0.2.0-beta.1", "v0.1.0"]), None);
-        assert_eq!(offer("0.1.0", &["v0.2.0-beta.1", "v0.1.1", "v0.1.0"]).as_deref(), Some("0.1.1"));
+        assert_eq!(offer("0.1.0-beta.4", &["v0.1.0-beta.5", "v0.1.0-beta.4", "nightly"]), None);
+        assert_eq!(offer("0.1.0-beta.4", &["v0.2.0-rc.1"]), None);
     }
 
     #[test]
-    fn a_pre_release_is_offered_the_newest_of_either_kind() {
-        assert_eq!(offer("0.1.0-beta.4", &["v0.1.0-beta.5", "v0.1.0-beta.4", "nightly"]).as_deref(), Some("0.1.0-beta.5"));
+    fn the_newest_final_release_is_offered() {
+        assert_eq!(offer("0.1.0", &["v0.2.0-beta.1", "v0.1.1", "v0.1.0"]).as_deref(), Some("0.1.1"));
+        assert_eq!(offer("0.1.0", &["v0.1.1", "v0.3.0", "v0.2.0"]).as_deref(), Some("0.3.0"));
+    }
+
+    #[test]
+    fn a_beta_is_moved_on_by_the_final_release() {
         assert_eq!(offer("0.1.0-beta.4", &["v0.1.0-beta.5", "v0.1.0"]).as_deref(), Some("0.1.0"));
-        assert_eq!(offer("0.1.0-beta.4", &["v0.1.0-beta.3"]), None);
+        assert_eq!(offer("0.1.0-beta.4", &["v0.0.9"]), None);
     }
 }
