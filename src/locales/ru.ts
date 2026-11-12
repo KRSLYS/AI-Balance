@@ -73,6 +73,8 @@ export const ru: Locale = {
     privacyPolicy: "Политика конфиденциальности",
     updateAvailable: "Доступна версия {v}.",
     download: "Скачать",
+    updateNow: "Обновить",
+    updating: "Загрузка обновления… {p}%",
     checkUpdates: "Проверять обновления",
     priority: "Важное",
     allUsage: "Всё использование",

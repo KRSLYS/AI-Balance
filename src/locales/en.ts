@@ -72,6 +72,8 @@ export const en = {
     privacyPolicy: "Privacy policy",
     updateAvailable: "Version {v} is available.",
     download: "Download",
+    updateNow: "Update",
+    updating: "Downloading the update… {p}%",
     checkUpdates: "Check for updates",
     priority: "Priority",
     allUsage: "All Usage",

@@ -73,6 +73,8 @@ export const de: Locale = {
     privacyPolicy: "Datenschutzerklärung",
     updateAvailable: "Version {v} ist verfügbar.",
     download: "Herunterladen",
+    updateNow: "Aktualisieren",
+    updating: "Update wird geladen… {p} %",
     checkUpdates: "Nach Updates suchen",
     priority: "Priorität",
     allUsage: "Gesamte Nutzung",

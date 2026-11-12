@@ -73,6 +73,8 @@ export const tr: Locale = {
     privacyPolicy: "Gizlilik politikası",
     updateAvailable: "{v} sürümü yayımlandı.",
     download: "İndir",
+    updateNow: "Güncelle",
+    updating: "Güncelleme indiriliyor… %{p}",
     checkUpdates: "Güncellemeleri denetle",
     priority: "Öncelik",
     allUsage: "Tüm kullanım",

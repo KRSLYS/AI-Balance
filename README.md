@@ -42,7 +42,7 @@ Every number comes from the provider's own API. AI Balance estimates nothing.
 - Desktop: a small panel beside the tray icon with your limits by priority, close-to-tray, launch at
   login. On macOS the fullest limit shows next to the icon.
 - Android: a home-screen widget with your three fullest limits.
-- Tells you when a newer version is out.
+- Tells you when a newer version is out, and on desktop installs it for you with one click.
 - 12 languages, chosen on first launch: English, العربية, 简体中文, Français, Deutsch, Español,
   Italiano, Português, Nederlands, Polski, Русский, Türkçe. Light and dark themes.
 
@@ -121,6 +121,7 @@ Without any secrets the workflow still produces installers for every platform. A
 
 | Secret | What it is |
 |---|---|
+| `TAURI_SIGNING_PRIVATE_KEY` | the key that signs in-app updates for the desktop apps (see below) |
 | `ANDROID_KEYSTORE_BASE64` | base64 of your Android signing keystore (also produces a signed `.aab` for Google Play) |
 | `ANDROID_KEYSTORE_PASSWORD` | the keystore's password (also used as the key's password) |
 | `ANDROID_KEY_ALIAS` | the key's alias (`aibalance` when not set) |
@@ -128,6 +129,23 @@ Without any secrets the workflow still produces installers for every platform. A
 | `APPLE_API_KEY` | App Store Connect API key ID |
 | `APPLE_API_KEY_BASE64` | base64 of the API key's `.p8` file |
 | `APPLE_DEVELOPMENT_TEAM` | your Apple Developer team ID |
+
+#### In-app updates
+
+The desktop apps update themselves: the banner's **Update** button downloads the new version with a
+progress bar, installs it and restarts. An update is accepted only if it was signed with this
+project's update key, whose public half is in `src-tauri/tauri.conf.json`.
+
+Add the private half as the `TAURI_SIGNING_PRIVATE_KEY` secret. Without it the release still builds,
+and the button opens the download page instead. Keep the key safe: an app can only be updated by
+files signed with the key it was built with. To make a new pair:
+
+```bash
+npx tauri signer generate -w aibalance-updater.key
+```
+
+Installs from a `.deb` or `.rpm` package, and the Android app, cannot replace themselves; there the
+button opens the download page.
 
 #### Android
 

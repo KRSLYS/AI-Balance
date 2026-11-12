@@ -73,6 +73,8 @@ export const zh: Locale = {
     privacyPolicy: "隐私政策",
     updateAvailable: "新版本 {v} 可用。",
     download: "下载",
+    updateNow: "更新",
+    updating: "正在下载更新… {p}%",
     checkUpdates: "检查更新",
     priority: "优先",
     allUsage: "全部用量",

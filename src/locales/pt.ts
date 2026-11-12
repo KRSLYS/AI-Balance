@@ -73,6 +73,8 @@ export const pt: Locale = {
     privacyPolicy: "Política de privacidade",
     updateAvailable: "A versão {v} está disponível.",
     download: "Transferir",
+    updateNow: "Atualizar",
+    updating: "A transferir a atualização… {p}%",
     checkUpdates: "Procurar atualizações",
     priority: "Prioridade",
     allUsage: "Toda a utilização",

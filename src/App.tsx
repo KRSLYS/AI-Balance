@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, inApp, type ProviderId, type ViewState } from "./api";
 import { demoState } from "./demo";
-import { I18nContext, makeI18n, resolveLang } from "./i18n";
+import { I18nContext, makeI18n, resolveLang, useI18n } from "./i18n";
 import Dashboard from "./Dashboard";
 import AccountsView from "./AccountsView";
 import SettingsView from "./SettingsView";
@@ -90,14 +90,7 @@ export default function App() {
           )}
         </header>
         {!inApp && !sample && <div className="banner">{i18n.t("demoBanner")}</div>}
-        {state.update && (
-          <div className="banner update">
-            <span>{i18n.t("updateAvailable", { v: state.update.version })}</span>
-            <button className="link" onClick={() => api.open(state.update!.url)}>
-              {i18n.t("download")} ↗
-            </button>
-          </div>
-        )}
+        {state.update && <UpdateBanner update={state.update} />}
         {sample && (
           <div className="banner">
             <span>{i18n.t("sampleBanner")}</span>
@@ -122,6 +115,50 @@ export default function App() {
         {adding && <AddAccount initial={adding.provider} offered={state.providers} onClose={() => setAdding(null)} />}
       </div>
     </I18nContext.Provider>
+  );
+}
+
+/** Says a newer version is out, and installs it in place with a progress bar where the app can. */
+function UpdateBanner({ update }: { update: { version: string; url: string } }) {
+  const i18n = useI18n();
+  const [percent, setPercent] = useState<number | null>(null);
+
+  useEffect(
+    () =>
+      api.onUpdateProgress(({ downloaded, total }) => {
+        if (total) setPercent(Math.min(100, Math.round((downloaded / total) * 100)));
+      }),
+    [],
+  );
+
+  const install = async () => {
+    setPercent(0);
+    try {
+      await api.installUpdate();
+    } catch {
+      // This install cannot update itself: hand over to the download page.
+      setPercent(null);
+      api.open(update.url);
+    }
+  };
+
+  if (percent !== null) {
+    return (
+      <div className="banner update updating">
+        <span>{i18n.t("updating", { p: percent })}</span>
+        <div className="bar" role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}>
+          <div className="fill ok" style={{ width: `${percent}%`, animation: "none" }} />
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="banner update">
+      <span>{i18n.t("updateAvailable", { v: update.version })}</span>
+      <button className="primary small" onClick={install}>
+        {i18n.t("updateNow")}
+      </button>
+    </div>
   );
 }
 

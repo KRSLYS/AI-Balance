@@ -1016,3 +1016,13 @@ input[type="checkbox"] {
 .panel-foot .ghost {
   padding: 7px 9px;
 }
+
+.banner.updating {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.banner.updating .bar {
+  background: var(--surface);
+}

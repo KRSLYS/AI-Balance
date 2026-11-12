@@ -25,6 +25,7 @@ use store::Store;
 const NOT_OFFERED: &str = "This version of AI Balance does not offer that provider.";
 const STATE_EVENT: &str = "state-changed";
 const LOGIN_EVENT: &str = "login-finished";
+const UPDATE_PROGRESS_EVENT: &str = "update-progress";
 /// How long a failed account waits before the loop reads it again, by consecutive failures.
 const BACKOFF_SECS: [i64; 5] = [60, 120, 300, 900, 1800];
 
@@ -453,6 +454,51 @@ async fn ads_show_privacy_options() {
     let _ = tauri::async_runtime::spawn_blocking(ads::show_privacy_options).await;
 }
 
+#[derive(Serialize, Clone)]
+struct UpdateProgress {
+    downloaded: u64,
+    total: Option<u64>,
+}
+
+/// Downloads the newer release, installs it and restarts the app, reporting progress on the way.
+/// Fails where the app cannot update itself (a .deb or .rpm install, a phone, a release without
+/// signed update files); the interface then opens the release page instead.
+#[tauri::command]
+async fn install_update(app: AppHandle) -> Result<(), String> {
+    #[cfg(desktop)]
+    {
+        use tauri_plugin_updater::UpdaterExt;
+        const UNAVAILABLE: &str = "This install cannot update itself.";
+        let version = app.state::<AppState>().update.lock().unwrap().as_ref().map(|update| update.version.clone());
+        let version = version.filter(|_| Edition::current().checks_for_updates()).ok_or(UNAVAILABLE)?;
+        // The files to install and their signatures are listed in the release's own latest.json.
+        // The download is accepted only if it was signed with this project's update key.
+        let manifest = format!("https://github.com/KRSLYS/AI-Balance/releases/download/v{version}/latest.json");
+        let endpoint = manifest.parse().map_err(|_| UNAVAILABLE)?;
+        let updater =
+            app.updater_builder().endpoints(vec![endpoint]).and_then(|builder| builder.build()).map_err(|error| error.to_string())?;
+        let update = updater.check().await.map_err(|error| error.to_string())?.ok_or(UNAVAILABLE)?;
+        let mut downloaded = 0u64;
+        let progress = app.clone();
+        update
+            .download_and_install(
+                move |chunk, total| {
+                    downloaded += chunk as u64;
+                    let _ = progress.emit(UPDATE_PROGRESS_EVENT, UpdateProgress { downloaded, total });
+                },
+                || {},
+            )
+            .await
+            .map_err(|error| error.to_string())?;
+        app.restart();
+    }
+    #[cfg(mobile)]
+    {
+        let _ = app;
+        Err("This install cannot update itself.".into())
+    }
+}
+
 // ----- tray (desktop) -----
 
 #[cfg(desktop)]
@@ -584,6 +630,7 @@ pub fn run() {
         // A second launch shows the running app's window. The first plugin registered must be this one.
         builder = builder
             .plugin(tauri_plugin_single_instance::init(|app, _, _| show_window(app)))
+            .plugin(tauri_plugin_updater::Builder::new().build())
             .plugin(tauri_plugin_autostart::init(tauri_plugin_autostart::MacosLauncher::LaunchAgent, Some(vec!["--hidden"])));
     }
     #[cfg(target_os = "android")]
@@ -684,7 +731,8 @@ pub fn run() {
             show_main,
             ads_start,
             ads_privacy_options_required,
-            ads_show_privacy_options
+            ads_show_privacy_options,
+            install_update
         ])
         .run(tauri::generate_context!())
         .expect("error while running AI Balance");

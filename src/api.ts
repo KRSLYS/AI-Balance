@@ -122,6 +122,13 @@ export const api = {
   adsStart: (): Promise<number> => (inApp ? invoke("ads_start") : Promise.resolve(0)),
   adsPrivacyOptionsRequired: (): Promise<boolean> => (inApp ? invoke("ads_privacy_options_required") : Promise.resolve(false)),
   adsShowPrivacyOptions: (): Promise<void> => (inApp ? invoke("ads_show_privacy_options") : Promise.resolve()),
+  /** Downloads and installs the newer release, then restarts. Rejects where the app cannot update itself. */
+  installUpdate: (): Promise<void> => (inApp ? invoke("install_update") : Promise.reject("Demo mode")),
+  onUpdateProgress: (handler: (progress: { downloaded: number; total: number | null }) => void): (() => void) => {
+    if (!inApp) return () => {};
+    const stop = listen<{ downloaded: number; total: number | null }>("update-progress", (event) => handler(event.payload));
+    return () => void stop.then((unlisten) => unlisten());
+  },
   showMain: (): Promise<void> => (inApp ? invoke("show_main") : Promise.resolve()),
   onState: (handler: (state: ViewState) => void): (() => void) => {
     if (!inApp) {

@@ -135,21 +135,36 @@ jobs:
 
       - name: Build
         shell: bash
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         run: |
           args="${{ matrix.args }}"
           # RPM does not accept a version with a pre-release suffix such as 1.2.3-beta.1.
           case "${{ needs.prepare.outputs.version }}" in *-*) args="${args/deb,rpm,appimage/deb,appimage}" ;; esac
-          npx tauri build $args
+          # With the updater key, also make the signed files the in-app updater downloads.
+          if [ -n "$TAURI_SIGNING_PRIVATE_KEY" ]; then
+            npx tauri build $args --config '{"bundle":{"createUpdaterArtifacts":true}}'
+          else
+            echo "::notice::No TAURI_SIGNING_PRIVATE_KEY secret, so this build cannot update itself in the app. See the README."
+            npx tauri build $args
+          fi
 
       - name: Collect installers
         shell: bash
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
         run: |
           mkdir -p out
-          find "${{ matrix.bundle }}" -type f \( -name '*.deb' -o -name '*.rpm' -o -name '*.AppImage' -o -name '*.exe' -o -name '*.dmg' \) -print0 |
+          find "${{ matrix.bundle }}" -type f \( -name '*.deb' -o -name '*.rpm' -o -name '*.AppImage' -o -name '*.exe' -o -name '*.dmg' \
+            -o -name '*.app.tar.gz' -o -name '*.sig' \) -print0 |
             while IFS= read -r -d '' file; do
               # "AI Balance_1.2.3_x64.dmg" becomes "AIBalance_1.2.3_x64.dmg": no spaces in download names.
               name="$(basename "$file")"
-              cp "$file" "out/${name// /}"
+              name="${name// /}"
+              # The macOS update archive carries no version in its name; give it one.
+              name="${name/#AIBalance.app.tar.gz/AIBalance_${VERSION}_universal.app.tar.gz}"
+              cp "$file" "out/$name"
             done
           ls -l out
           test -n "$(ls -A out)"
@@ -360,11 +375,16 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/download-artifact@v4
         with:
           path: artifacts
           pattern: aibalance-*
           merge-multiple: true
+
+      - name: Write the update manifest
+        run: node scripts/make-update-manifest.mjs artifacts "${{ needs.prepare.outputs.version }}"
 
       - name: Create the GitHub Release
         env:
